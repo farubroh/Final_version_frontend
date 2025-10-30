@@ -1,0 +1,4 @@
+/* register-page.component.css (optional) */
+.error-msm { color: #b00020; margin-bottom: 12px; }
+.success-msm { color: #006400; margin-bottom: 12px; }
+.btn[disabled] { opacity: 0.7; cursor: not-allowed; }

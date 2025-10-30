@@ -1,0 +1,85 @@
+/* Ensure sidebar icon always shows even on small screens */
+.sidebar-icon {
+  display: block;
+}
+
+/* Global styles */
+.font-inter {
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+:host {
+  display: block;
+}
+
+.shadow-sm {
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+.border-gray-100 {
+  border-color: #f3f4f6;
+}
+
+.text-xs {
+  font-size: 12px;
+}
+
+button:focus, a:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+:host ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+:host ::-webkit-scrollbar-thumb {
+  background: rgba(16, 24, 40, 0.06);
+  border-radius: 999px;
+}
+
+@media (max-width: 768px) {
+  main {
+    padding: 1rem;
+  }
+}
+
+/* style for the floating "more" button in the sidebar */
+.sidebar-more-btn {
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.sidebar-more-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+.product-user-panel img {
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.08);
+}
+
+button[title] {
+  transition: transform .12s ease;
+}
+
+button[title]:hover {
+  transform: translateY(-4px);
+}
+/* Sidebar submenu line connection */
+ul.border-l li::before {
+  content: "";
+  position: absolute;
+  left: -1.05rem;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  border-left: 2px solid #e5e7eb; /* gray-200 */
+  border-bottom: 2px solid #e5e7eb;
+  border-radius: 0 0 0 6px;
+  transform: translateY(-50%);
+}
+
+ul.border-l li:last-child::before {
+  border-left: none; /* remove line for last item */
+}

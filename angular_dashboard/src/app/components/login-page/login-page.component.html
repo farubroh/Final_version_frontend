@@ -1,0 +1,93 @@
+<div class="container login-wrapper">
+    <div class="row">
+        <div class="col-md-7 col-sm-7 hidden-xs login-left"></div>
+        <div class="col-sm-12 login-right">
+            <div class="row">
+                <h2 class="login-head-title">Integrated University Management System</h2>
+                <div class="col-sm-3 col-xs-2 text-center branding">
+                    <img src="../../../assets/images/branding.jpg" title="IUMS" alt="IUMS" height="92">
+                </div>
+                <div class="col-sm-9 col-xs-10">
+                    <blockquote>
+                        <p class="IUMS-title">IUMS <span>for</span></p>
+                        <span class="IUMS-slogan">Ahsanullah University of Science and Technology (AUST)</span>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="signInDiv">
+                <div class="IUMS-sub-head">Sign in with your IUMS Id</div>
+                <form (ngSubmit)="handleSubmit($event)">
+                    <div class="contact-wrap">
+                        <div class="error-msm" id="login_msg" style="display:none"></div>
+                        <div class="form-group">
+                            <label for="userName" class="contact-label">User ID</label>
+                            <input name="userName" type="text" class="form-control" id="userName"
+                                placeholder="Enter your User ID" [(ngModel)]="credentials.username" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="contact-label">Password</label>
+                            <input name="password" type="password" class="form-control" id="password"
+                                placeholder="Enter your password" [(ngModel)]="credentials.password" />
+                        </div>
+                        <div class="form-group">
+                            <div id="loginCaptcha"></div>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn" id="login_btn">
+                                <span>Sign in</span>
+                            </button>
+                            <div class="btn loaderDiv">
+                                <div class="loader">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- <div class="login-forgotpassword">
+                    <a href="javascript:void(0)" onclick="manageDivs('fPassword')">Forgot password?</a>
+                </div> -->
+            </div>
+            <div class="fPasswordDiv" style="display:none;">
+                <div class="IUMS-sub-head">Forgot password?</div>
+                <p>Please enter your <span style="text-decoration: underline;font-weight: bold; color: green;">IUMS User
+                        ID</span>.
+                    Password reset instruction will be sent to you email.</p>
+                <!-- <form id='forgotPasswordForm' action='' method='put'>
+                    <div class="contact-wrap">
+                        <div class="error-msm" id="forgot_password_msg" style="display:none"></div>
+                        <div class="form-group" id="userIdDiv">
+                            <input name="userId_forgotPassword" type="text" class="form-control"
+                                id="userId_forgotPassword" placeholder="Enter your User ID" />
+                        </div>
+                        <div class="text-center">
+                            <div class="form-group">
+                                <div id="forgotPasswordCaptcha"></div>
+                            </div>
+                            <button type="button" class="btn" id="btn_forgotPassword" onclick="forgotPassword()">
+                                <span>Submit</span>
+                            </button>
+                            <div class="btn loaderDiv">
+                                <div class="loader">Loading...</div>
+                            </div>
+                        </div>
+                    </div>
+                </form> -->
+
+                <!-- <div class="login-forgotpassword">
+                    <a href="javascript:void(0)" onclick="manageDivs('login')">Go to login</a>
+                </div> -->
+            </div>
+            <br /><br />
+
+            <!-- <div class="successdDiv" style="display:none">
+                <div class="IUMS-sub-head">Success!</div>
+                <p>Your password reset instructions have been sent. Please check your email.</p>
+                <p>If you do not receive an email, please check your spam folder and contact </p>
+                <div class="login-forgotpassword"><a href="javascript:void(0)" onclick="manageDivs('login')">Go to
+                        login</a></div>
+            </div> -->
+            <p class="copy-right"><br />
+                <span class="newYear"></span> &copy; - Ahsanullah University of Science and Technology
+            </p>
+        </div>
+    </div>
+</div>

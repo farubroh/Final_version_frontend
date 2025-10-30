@@ -1,0 +1,175 @@
+<!-- Backdrop (click to close side boxes) -->
+<div
+  class="backdrop"
+  *ngIf="showAssignBox || showCategoryBox || showCommentSidebar"
+  (click)="toggleAllOff()">
+</div>
+
+<div class="modal-wrapper" (keydown.escape)="toggleAllOff()">
+  <div class="issue-card refined" role="dialog" aria-modal="true" aria-label="Issue details">
+
+    <!-- Header -->
+    <div class="issue-header">
+      <div class="title-section">
+        <h2 [title]="issue.title || ''">{{ issue.title }}</h2>
+      </div>
+      <div class="header-actions">
+        <button class="btn-complete" *ngIf="issue?.status !== 'COMPLETED'" (click)="markComplete()">
+          <i class="bi bi-check-circle"></i> Mark Complete
+        </button>
+        <button class="btn-close" (click)="onCloseModal()" aria-label="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Icons -->
+    <div class="icon-row">
+      <i class="fa-solid fa-calendar-check" title="Due Date"></i>
+      <i class="fa-solid fa-list" title="Check list"></i>
+      <i class="fa-solid fa-message" title="Comments" (click)="toggleCommentSidebar()"></i>
+
+      <!-- anchor the assign popover to this wrapper -->
+      <div class="assign-wrapper">
+        <i class="fa-solid fa-user-plus" title="Assign Developer" (click)="toggleAssignBox()"></i>
+
+        <!-- Developer Assignment Box (anchored under the icon) -->
+        <div *ngIf="showAssignBox" class="inline-assign-box" role="dialog" aria-label="Assign developer">
+          <input
+            type="text"
+            class="search-box"
+            placeholder="Search developers..."
+            [(ngModel)]="searchQuery"
+            (keydown.escape)="showAssignBox=false" />
+
+          <div
+            class="member-option"
+            *ngFor="let dev of filteredDevelopers()"
+            (click)="selectDeveloper(dev)"
+            [class.selected]="selectedDeveloper?.id === dev.id">
+            <img src="/Male.png" class="avatar" alt="" />
+            <span>{{ dev.username }}</span>
+          </div>
+
+          <div *ngIf="selectedDeveloper" class="selected-dev-row">
+            <img src="/Male.png" class="avatar" alt="" />
+            <span>{{ selectedDeveloper.username }}</span>
+            <button class="remove-btn" type="button" (click)="selectedDeveloper = null" aria-label="Remove selection">×</button>
+          </div>
+
+          <button class="submit-btn" [disabled]="!selectedDeveloper" (click)="submitAssignment()">Assign</button>
+        </div>
+      </div>
+
+      <!-- Category anchor (optional: keep here so it doesn’t push layout) -->
+      <div class="category-wrapper">
+        <i class="fa-solid fa-tags" title="Category" (click)="toggleCategoryBox()"></i>
+
+       
+        <div *ngIf="showCategoryBox" class="category-box" role="dialog" aria-label="Set category">
+          <div class="category-list">
+            <h4>Existing Categories</h4>
+            <ul>
+              <li
+                *ngFor="let c of categoryList"
+                (click)="setCategoryForIssue(c)"
+                class="clickable"
+                [class.selected]="issue.category === c"
+                [title]="'Set category: ' + c"
+              >
+                {{ c }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="add-category-row">
+            <input
+              type="text"
+              class="search-box"
+              placeholder="Add a new category..."
+              [(ngModel)]="newCategory"
+              (keyup.enter)="addCategory()"
+            />
+            <button class="submit-btn" (click)="addCategory()">Add Category</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Issue Details -->
+    <div class="info-section">
+      <div class="info-item">
+        <span class="label">Status:</span>
+        <span class="value pill" [ngClass]="issue.status.toLowerCase()">{{ issue.status }}</span>
+      </div>
+
+      <div class="info-item" *ngIf="issue?.deadline">
+        <span class="label">Deadline:</span>
+        <span class="value">{{ issue.deadline }}</span>
+      </div>
+
+      <div class="info-item info-description">
+        <span class="label">Description:</span>
+        <div class="value description" [title]="issue.description || ''">
+          {{ issue.description }}
+        </div>
+      </div>
+
+      <div class="info-item">
+        <span class="label">Category:</span>
+        <span class="tag">{{ issue.category || 'No Category' }}</span>
+      </div>
+
+      <!-- Developer Info -->
+      <div class="info-item" *ngIf="['INPROGRESS','COMPLETED','REJECTED'].includes(issue?.status ?? '')">
+        <span class="label">Developer:</span>
+        <span class="value">
+          {{ getDeveloperName(issue.developerId) || issue.developerName || 'Unknown Developer' }}
+        </span>
+      </div>
+
+      <!-- Attachments -->
+      <div class="info-item" *ngIf="issue?.files?.length">
+        <span class="label">Attachments:</span>
+        <div class="value tags">
+          <div class="file-link" *ngFor="let file of issue.files">
+            <a [href]="apiBase + '/api/issues/files/' + issue.user.id + '/' + file" target="_blank" rel="noopener noreferrer">
+              📎 {{ file }}
+            </a>
+            <a [href]="apiBase + '/api/issues/files/' + issue.user.id + '/' + file" download class="download-icon" aria-label="Download file">⬇️</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status messages -->
+    <!-- Completed Reason -->
+<div *ngIf="issue?.status === 'COMPLETED'" class="status-msg success">
+  ✅ {{ issue.completedReason || 'No reason provided' }}
+</div>
+
+<!-- Rejection Reason -->
+<div *ngIf="issue?.status === 'REJECTED'" class="status-msg error">
+  ❌ {{ issue.rejectionReason || 'No reason provided' }}
+</div>
+
+
+
+  </div>
+
+  <!-- Comment Sidebar -->
+  <div *ngIf="showCommentSidebar" class="comment-sidebar">
+    <h4>Comments</h4>
+    <div *ngFor="let cmt of comments" class="comment">
+      <img src="/assets/images/male.jpg" class="avatar" alt="" />
+      <div class="comment-body">
+        <div class="comment-meta"><strong>{{ cmt.author }}</strong></div>
+        <p>{{ cmt.message }}</p>
+      </div>
+    </div>
+    <div class="comment-box">
+      <textarea [(ngModel)]="newComment" placeholder="Write a comment..."></textarea>
+      <button (click)="submitComment()">Post Comment</button>
+    </div>
+  </div>
+</div>

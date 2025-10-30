@@ -1,0 +1,144 @@
+.configuration-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.title {
+  text-align: center;
+  color: #333;
+}
+
+.input-section {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+input, select {
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  transition: border 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #4caf50;
+}
+
+button.add-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button.add-button:hover {
+  background-color: #45a049;
+}
+
+.data-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.data-table th {
+  background-color: #f4f4f4;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d32f2f;
+}
+
+/* Animation for new rows */
+.fade-in-row {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.configuration-container {
+  font-family: 'Inter', sans-serif;
+}
+
+.fade-in-row {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.configuration-container {
+  font-family: 'Inter', sans-serif;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+/* HSSelect small helpers */
+.check-icon { display: none; }          /* hide by default */
+.hs-selected .check-icon { display: inline-block; } /* show check when selected */
+
+/* make selected option title bold */
+.hs-selected [data-title] {
+  font-weight: 600;
+}
+
+/* For toggle (the selected item inside the closed select), HSSelect sometimes copies [data-title]
+   into the toggle. This makes sure that when element in toggle has hs-selected class it's bold as well */
+.hs-select .hs-selected [data-title] {
+  font-weight: 600 !important;
+}
+
+/* Tiny: ensure avatar icons in options size consistently */
+[data-hs-select-option] img {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 9999px;
+}
+

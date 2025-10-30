@@ -1,0 +1,68 @@
+.column {
+  background-color: #ebecf0;
+  border-radius: 8px;
+  padding: 8px;
+  width: 272px;
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 8px;
+}
+
+.column-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+.column-menu-btn {
+  background: none;
+  border: none;
+  color: #5e6c84;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.column-drop-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 50px;
+}
+.cdk-drag-preview {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  transform: rotate(0deg) !important;
+}
+
+.cdk-drag-placeholder {
+  background: #e0e0e0;
+  border-radius: 5px;
+  min-height: 50px;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0,0,0.2,1);
+}
+
+.issue-card-wrapper {
+  margin-bottom: 8px;
+}
+
+.add-card-footer {
+  padding: 8px;
+  font-size: 14px;
+  color: #5e6c84;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.add-card-footer:hover {
+  background-color: rgba(9, 30, 66, 0.08);
+}

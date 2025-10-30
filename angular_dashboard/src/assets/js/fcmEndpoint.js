@@ -1,0 +1,1 @@
+var fcmEndpointUrl = window.location.origin + '/ums-webservice-academic/fcmToken';

@@ -1,0 +1,691 @@
+/* Global Styles */
+body, html {
+  margin: 0 !important;
+  padding: 0 ;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f2f4f8;
+  overflow: hidden;
+  font-size: 16px;
+}
+
+*{
+   margin: 0;
+  padding: 0;
+    
+  }
+
+/* Small, attached user details popover */
+.user-popover {
+  position: absolute;
+  z-index: 9999;
+  min-width: 260px;
+  max-width: 320px;
+  background: #ffffff;
+  border: 1px solid #e6e8ec;
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+  padding: 10px 12px 12px;
+}
+
+.user-popover-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.user-popover-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #222;
+}
+
+.user-popover-close {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  color: #999;
+}
+.user-popover-close:hover { color: #555; }
+
+.user-popover-body .row {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px dashed #eee;
+}
+.user-popover-body .row:last-child { border-bottom: none; }
+
+.user-popover-body .k {
+  color: #666;
+  font-size: 12px;
+}
+.user-popover-body .v {
+  color: #111;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Small arrow pointing to the username */
+.user-popover-arrow {
+  position: absolute;
+  top: -6px;
+  left: 14px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-left: 1px solid #e6e8ec;
+  border-top: 1px solid #e6e8ec;
+  transform: rotate(45deg);
+}
+
+/* Make sure the page can position the popover correctly on small screens */
+.main-area { position: relative; }
+
+/* Style for the Users Info column */
+/* + Add Category Button */
+.add-category-btn {
+  margin-left: 10px;
+  background: #f3f5f9;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+ 
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: revert;
+}
+
+.add-category-btn i {
+  font-size: 12px;
+  color: #333;
+  pointer-events: none;
+}
+
+.add-category-btn:hover {
+  background: #1e88e5;      /* blue hover */
+  border-color: #1e88e5;
+}
+
+.add-category-btn:hover i {
+  color: #fff;
+}
+
+
+.user-info {
+  font-size: 13px;
+  font-weight: 1100;
+  color: #333;
+  border-radius: 6px;
+  padding: 5px 8px;
+  
+  text-align: center;
+  color: #555;
+}
+.user-info:hover {
+  background: #e0e0e0;
+  cursor: pointer;
+}
+/* Style for the Assigned button */
+.assigned-btn {
+  background-color: #81c784;  /* Default: Green */
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  cursor: not-allowed;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  min-width: 150px;
+}
+
+.assigned-btn:hover {
+  background-color: #66bb6a;  /* Darker green on hover */
+}
+
+/* Completed state */
+.completed-btn {
+  background-color: #4caf50; /* Solid green */
+  color: white;
+}
+
+/* Rejected state */
+.rejected-btn {
+  background-color: #e57373; /* Red */
+  color: white;
+}
+.rejected-btn:hover {
+  background-color: #e57373; /* Red */
+  color: white;
+}
+
+
+
+
+.nav-header {
+  display: flex;
+  justify-content: space-between;  /* Space between title and search box */
+  align-items: center;             /* Vertically center the items */
+  padding: 16px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.crm-wrapper {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(to bottom right, #f8fafc, #eef1f7);
+}
+
+/* Sidebar Styles */
+.sidebar {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+  width: 200px;
+  max-height: 700px;        /* Default small height */
+  overflow-y: auto;         /* Enable scrolling if content exceeds max-height */
+  margin-top: 20px;         /* Space from top */
+  margin-left: 20px;
+}
+
+/* Sidebar Icons and Text */
+.sidebar-icons {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px; /* Added margin top to create space above icons */
+}
+
+.sidebar-icons li {
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+}
+
+
+.sidebar-icons li i {
+  font-size: 15px; /* Size of icons */
+  padding-right: 10px;
+}
+
+.sidebar-icons li span {
+  font-size: 16px;
+  
+}
+
+/* Highlight the active list item */
+.sidebar-icons li.active {
+  background-color: black;
+  color: white;
+}
+
+/* For the active state of the sidebar item when it's clicked */
+.sidebar-icons li.active i,
+.sidebar-icons li.active span {
+  color: white;
+}
+
+.sidebar-icons li .case-card {
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sidebar-icons li .case-card.highlighted {
+  background-color: black;
+  color: white;
+}
+
+/* Main Area Styles */
+.main-area {
+  flex: 1;
+  padding: 24px 30px;
+  overflow-y: hidden;
+}
+
+/* Section for Problem Status */
+.case-section {
+  background: #fff;
+  padding: 16px;
+  border-radius: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03);
+}
+
+.case-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: #111;
+}
+
+/* Case Card Styling */
+.case-card {
+  background: #f3f5f9;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #333;
+  margin-bottom: 10px;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+  transition: 0.3s ease;
+}
+
+.case-card.highlighted {
+  background: #000;
+  color: #fff;
+  font-weight: 600;
+}
+
+.case-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Avatar Bar Styles */
+.avatar-bar {
+  margin: 24px 0 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Lower Panels for Knowledge and Ticket Tables */
+.lower-panels {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.panel-box {
+  flex: 1;
+  min-width: 30%;
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.panel-box.wide {
+  
+  background: #fff;
+  padding: 16px;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  
+  
+}
+
+.table-wrapper{
+   flex: 1;
+  overflow-y: auto;
+    padding-bottom: 55px; 
+    font-size: 16px;
+}
+
+.panel-box.wide thead th {
+  position: sticky;
+  top: 0;
+  background: #f6f6f6;
+  z-index: 2;
+  text-align: left;
+  font-weight: bold;
+  padding: 8px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.panel-box.narrow {
+  flex: 1;
+}
+
+.panel-box h4 {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.panel-box table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.panel-box th, .panel-box td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #e4e4e4;
+  text-align: left;
+  color: #444;
+}
+
+.panel-box thead {
+  background: #f6f6f6;
+  font-weight: 600;
+}
+
+.view-btn {
+  background: linear-gradient(135deg, #1e88e5, #42a5f5);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  margin-left: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  transform: scale(1);
+}
+
+.view-btn:hover {
+  background: linear-gradient(135deg, #1565c0, #1e88e5);
+  box-shadow: 0 6px 14px rgba(33, 150, 243, 0.3);
+  transform: scale(1.05);
+}
+
+/* Category Badge Styling */
+.category-badge {
+  padding: 4px 6px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  width: 120px;
+}
+
+/* Dark Mode Support */
+.dark-mode {
+  background-color: #1e1e2f;
+  color: #eee;
+}
+
+.dark-mode .main-area,
+.dark-mode .panel-box {
+  background-color: #2e2e3f;
+  color: #fff;
+}
+
+.dark-mode .sidebar {
+  background-color: #111;
+}
+
+.dark-mode .sidebar-icons img {
+  filter: brightness(1.8);
+}
+
+/* Search Box Styling */
+.search-box {
+  padding: 12px 16px;
+ 
+  border-radius: 15px;
+  border: 2px solid #ddd;
+  width: 300px;
+  background-color: #f9f9f9;
+  
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+.search-box::placeholder {
+  color: #aaa;
+  font-style: italic;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect for placeholder */
+
+
+/* Search Box Input Focus Animation */
+
+
+@keyframes expandFocus {
+  0% {
+    width: 300px;
+    padding: 12px 16px;
+  }
+  50% {
+    width: 350px;
+    padding: 12px 20px;
+  }
+  100% {
+    width: 400px;
+    padding: 12px 24px;
+  }
+}
+
+/* Search Box Clear Button */
+.search-box::after {
+  content: "×";
+  font-size: 20px;
+  color: #aaa;
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.search-box:focus::after {
+  opacity: 1;
+  color: #ff4747;
+}
+
+.search-box:focus:hover::after {
+  color: #ff0000;
+}
+
+/* Animated Badge Styles */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0 5px;
+  animation: fadeInBadge 0.7s ease-in;
+  display: inline-block;
+}
+
+@keyframes fadeInBadge {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.badge.pending {
+  background: #ffcc80;
+  color: #000;
+}
+
+.badge.progress {
+  background: #81d4fa;
+  color: #000;
+}
+
+.badge.completed {
+  background: #aed581;
+  color: #000;
+}
+
+.badge.rejected {
+  background: #ef9a9a;
+  color: #000;
+}
+
+/* Fixed Table Headers */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #f4f6fa;
+  z-index: 2;
+}
+
+/* Responsive Layout Adjustments */
+@media (max-width: 1024px) {
+  .crm-wrapper {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar {
+    flex-direction: row;
+    width: 100%;
+    height: 56px;
+    justify-content: center;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    overflow-x: auto;
+  }
+
+  .sidebar-icons {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .main-area {
+    padding: 16px;
+  }
+
+  .case-columns {
+    flex-direction: column;
+  }
+
+  .lower-panels {
+    flex-direction: column;
+  }
+
+  .panel-box, .panel-box.wide, .panel-box.narrow {
+    width: 100%;
+    max-height: unset;
+  }
+
+  .admin-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-box {
+    width: 100%;
+    margin-top: 10px;
+  }
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+}
+
+.top-actions input {
+  width: 100%;
+  max-width: 100%;
+}
+
+.top-menu {
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+
+.circle-icon,
+.avatar {
+  width: 28px;
+  height: 28px;
+}
+/* Customize the scrollbar */
+::-webkit-scrollbar {
+  width: 2px;  /* width of the scrollbar */
+  height: 2px; /* height of the scrollbar */
+}
+
+/* Customize the scrollbar thumb (the part that you drag) */
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for scrollbar thumb */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Customize the scrollbar track (the background behind the thumb) */
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+  border-radius: 10px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+/* Status Text Colors */
+.status-pending {
+  color: #ffcc80;  /* Yellow for pending */
+}
+
+.status-inprogress {
+  color: #81d4fa;  /* Blue for in progress */
+}
+
+.status-completed {
+  color: #81c784;  /* Green for completed */
+}
+
+.status-rejected {
+  color: #ef9a9a;  /* Red for rejected */
+}

@@ -1,0 +1,47 @@
+<div
+  class="issue-card"
+  [ngClass]="{
+    pending: issue?.status === 'PENDING',
+    inprogress: issue?.status === 'INPROGRESS',
+    completed: issue?.status === 'COMPLETED',
+    rejected: issue?.status === 'REJECTED'
+  }"
+  cdkDrag
+  [cdkDragData]="issue"
+>
+  <!-- Card Title -->
+  <div class="card-title">{{ issue?.title }}</div>
+  <div class="created-time">{{ issue?.createdAt | date:'short' }}</div>
+
+  <!-- Labels -->
+  <div class="labels">
+    <span
+      class="label"
+      [ngStyle]="{
+        'background-color': getCategoryColor(issue?.category),
+        'border': '1px solid ' + getCategoryColor(issue?.category),
+        'border-radius': '5px',
+        'color': '#000',
+        'padding': '2px 5px',
+        'font-size': '12px'
+      }"
+    >
+      {{ issue?.category || 'Uncategorized' }}
+    </span>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <div class="stats">
+      <i class="fa-regular fa-comment"></i> {{ issue?.comments || 0 }}
+    </div>
+    <div class="avatars">
+      <img *ngIf="issue?.user?.avatar" [src]="issue?.user.avatar" />
+    </div>
+  </div>
+
+  <div class="user-info" *ngIf="issue?.user">
+    <span class="user-name">{{ issue?.user.name }}</span>
+    <span class="user-designation">{{ issue?.user.designation }}</span>
+  </div>
+</div>

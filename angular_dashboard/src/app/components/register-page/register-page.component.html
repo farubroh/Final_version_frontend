@@ -1,0 +1,102 @@
+<div class="container login-wrapper">
+  <div class="row">
+    <div class="col-md-7 col-sm-7 hidden-xs login-left"></div>
+
+    <div class="col-sm-12 login-right">
+      <div class="row">
+        <h2 class="login-head-title">Integrated University Management System</h2>
+
+        <div class="col-sm-3 col-xs-2 text-center branding">
+          <img src="../../../assets/images/branding.jpg" title="IUMS" alt="IUMS" height="92" />
+        </div>
+
+        <div class="col-sm-9 col-xs-10">
+          <blockquote>
+            <p class="IUMS-title">IUMS <span>for</span></p>
+            <span class="IUMS-slogan">Ahsanullah University of Science and Technology (AUST)</span>
+          </blockquote>
+        </div>
+      </div>
+
+      <div class="signInDiv">
+        <div class="IUMS-sub-head">Create a new account</div>
+
+        <form (ngSubmit)="handleSubmit($event)" #form="ngForm" novalidate>
+          <div class="contact-wrap">
+            <div *ngIf="error" class="error-msm" id="register_msg">{{ error }}</div>
+            <div *ngIf="success" class="success-msm">{{ success }}</div>
+
+            <div class="form-group">
+              <label for="userId" class="contact-label">User ID</label>
+              <input name="userId" type="text" class="form-control" id="userId"
+                     placeholder="Enter User ID"
+                     [(ngModel)]="payload.userId"
+                     required
+                     #userId="ngModel" />
+              <div *ngIf="userId.invalid && userId.touched" class="text-danger">User ID is required</div>
+            </div>
+
+            <div class="form-group">
+              <label for="email" class="contact-label">Email</label>
+              <input name="email" type="email" class="form-control" id="email"
+                     placeholder="Enter email"
+                     [(ngModel)]="payload.email"
+                     required
+                     #email="ngModel" />
+              <div *ngIf="email.invalid && email.touched" class="text-danger">Valid email is required</div>
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="contact-label">Password</label>
+              <input name="password" type="password" class="form-control" id="password"
+                     placeholder="Enter password"
+                     [(ngModel)]="payload.password"
+                     required
+                     minlength="6"
+                     #password="ngModel" />
+              <div *ngIf="password.invalid && password.touched" class="text-danger">
+                Password is required (min 6 chars)
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="confirmPassword" class="contact-label">Confirm Password</label>
+              <input name="confirmPassword" type="password" class="form-control" id="confirmPassword"
+                     placeholder="Confirm password"
+                     [(ngModel)]="confirmPassword"
+                     required
+                     #confirmPass="ngModel" />
+              <div *ngIf="confirmPass.touched && confirmPassword !== payload.password" class="text-danger">
+                Passwords do not match
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="roleId" class="contact-label">Role</label>
+              <select name="roleId" class="form-control" id="roleId" [(ngModel)]="payload.roleId" required>
+                <option [ngValue]="3">User</option>
+                <option [ngValue]="2">Developer</option>
+                <option [ngValue]="1">Admin</option>
+              </select>
+            </div>
+
+            <div class="text-center">
+              <button type="submit" class="btn" id="register_btn" [disabled]="isSubmitting || !form.form.valid || (confirmPassword !== payload.password)">
+                <span *ngIf="!isSubmitting">Register</span>
+                <span *ngIf="isSubmitting">Registering...</span>
+              </button>
+
+              <button type="button" class="btn" (click)="goToLogin()" style="margin-left:8px">
+                Back to login
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <p class="copy-right"><br />
+        <span class="newYear"></span> &copy; - Ahsanullah University of Science and Technology
+      </p>
+    </div>
+  </div>
+</div>

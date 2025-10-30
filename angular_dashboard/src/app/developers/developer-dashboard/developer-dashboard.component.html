@@ -1,0 +1,273 @@
+<!-- Top bar -->
+<header class="topbar">
+  <div class="left">
+    <div class="board-title">Developer Dashboard</div>
+  </div>
+
+  <div class="search">
+    <input type="search" placeholder="Search cards…" [value]="query()"
+      (input)="query.set(($any($event.target)).value)" />
+  </div>
+
+  <div class="actions">
+    <button class="icon" title="Notifications"><i class="fa-regular fa-bell"></i></button>
+    <button class="icon" title="Messages"><i class="fa-regular fa-message"></i></button>
+  </div>
+</header>
+<!-- Travel Statistics Card -->
+<!-- WRAPPER -->
+<div class="dashboard-section">
+  <!-- LEFT: Travel Summary Card -->
+  <div class="travel-summary-card">
+    <div class="travel-summary-header">
+      <div class="distance">
+        <div class="value">8,920</div>
+        <div class="label">Total Issue</div>
+      </div>
+      <div class="locations">
+        <div class="value">356</div>
+        <div class="label">Solved (omar)</div>
+      </div>
+    </div>
+
+    <div class="travel-modes">
+      <div class="mode car">
+        <i class="fa-solid fa-spinner"></i> <span>5,470</span>
+      </div>
+      <div class="mode walk">
+        <i class="fa-solid fa-chart-column"></i> <span>820</span>
+      </div>
+      <div class="mode bike">
+        <i class="fa-solid fa-circle-check"></i> <span>423</span>
+      </div>
+      <div class="mode train">
+        <i class="fa-solid fa-circle-xmark"></i> <span>2,207</span>
+      </div>
+    </div>
+
+    <div class="progress-bars">
+      <div class="bar car"></div>
+      <div class="bar walk"></div>
+      <div class="bar bike"></div>
+      <div class="bar train"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Comments Card -->
+  <div class="comments-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+    <h4 class="font-semibold mb-3">Comments</h4>
+    <div class="space-y-4">
+      <div class="flex items-start gap-3">
+        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full"/>
+        <div>
+          <div class="text-sm font-medium">Joyce <span class="text-xs text-gray-400">on Bento Pro 2.0</span></div>
+          <div class="text-gray-500 text-sm mt-1">Great work! When HTML version will be available? ⚡</div>
+          <div class="text-xs text-gray-400 mt-1">09:00 AM</div>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-3">
+        <img src="https://randomuser.me/api/portraits/men/22.jpg" class="w-10 h-10 rounded-full"/>
+        <div>
+          <div class="text-sm font-medium">Gladyce <span class="text-xs text-gray-400">on Food Delivery App</span></div>
+          <div class="text-gray-500 text-sm mt-1">Thanks for the design inspiration.</div>
+          <div class="text-xs text-gray-400 mt-1">10:30 AM</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Board -->
+<section class="list" *ngFor="let list of filteredLists(); let i = index">
+  <header class="list__header">
+    <h3>{{ list.title }}</h3>
+  </header>
+
+  <!-- Each list has a unique id and is connected to others -->
+  <div class="list__body" cdkDropList [id]="'list-'+i" [cdkDropListData]="list.cards"
+       [cdkDropListConnectedTo]="connectedTo(i)" (cdkDropListDropped)="drop($event)">
+    <article class="card" *ngFor="let card of list.cards; trackBy: trackById" cdkDrag (click)="openCard(card)">
+      <div class="left">
+        <span class="status" [class.done]="card.done">●</span>
+      </div>
+
+      <div class="content">
+        <div class="title">
+
+          {{ card.title }}
+          <span *ngIf="card.subtitle" class="tag">{{ card.subtitle }}</span>
+        </div>
+        <div class="meta" *ngIf="card.meta as m">
+          <span *ngIf="m.views">👁 {{ m.views }}</span>
+          <span *ngIf="m.comments">💬 {{ m.comments }}</span>
+          <span *ngIf="m.attachments">📎 {{ m.attachments }}</span>
+        </div>
+
+        <!-- Display Category Color with Title and Username -->
+        <div class="category-info" *ngIf="card.raw?.issue?.category">
+            <span class="category-color"
+                  [ngStyle]="{ 'background-color': getCategoryColor(card.raw?.issue?.category || '') }">
+            </span>
+          <div class="category-details">
+            <div class="category-title">{{ card.title }}</div>
+            <div class="category-username">{{ card.raw?.createdBy?.username || '—' }}</div>
+            <div class="category-name">{{ card.raw?.issue?.category || 'Uncategorized' }}</div>
+          </div>
+        </div>
+
+
+
+      </div>
+
+      <div class="right" (click)="$event.stopPropagation()">
+      </div>
+    </article>
+
+  </div>
+
+  <footer class="list__footer">
+    <button class="add" (click)="addCard(list)">＋ Add a card</button>
+  </footer>
+</section>
+
+
+<!-- Details drawer -->
+<aside class="details" [class.open]="selected() !== null" (click)="closeDetails()">
+  <div class="details__panel" (click)="$event.stopPropagation()">
+    <header class="details__header">
+      <h3>{{ selected()?.title }}</h3>
+      <button class="close" (click)="closeDetails()">✕</button>
+    </header>
+
+    <div class="details__body" *ngIf="selected() as s">
+      <!-- 30%: DETAILS -->
+      <section class="col col--details">
+        <!-- Status -->
+        <div class="row">
+          <h4>Status:</h4>
+          <span class="status-badge" [class.open]="s.status === 'PENDING'"
+            [class.in-progress]="s.status === 'INPROGRESS'" [class.closed]="s.status === 'COMPLETED'"
+            [class.on-hold]="s.status === 'REJECTED'">
+            {{ s.status }}
+          </span>
+        </div>
+
+        <!-- Reporter -->
+        <div class="row">
+          <label>Username:</label>
+          <div>{{ s.subtitle || '—' }}</div>
+        </div>
+
+
+        <!-- Description -->
+        <div class="row">
+          <label class="muted">Description:</label>
+          <textarea
+            readonly
+            rows="4"
+            placeholder="Description…"
+            [value]="description()"
+            (input)="description.set(($any($event.target)).value)">
+          </textarea>
+        </div>
+
+        <!-- Files -->
+        <div class="files">
+          <div class="files__header">
+            <strong>Attachments:</strong>
+            <span *ngIf="loadingDetails">Loading…</span>
+            <span *ngIf="!loadingDetails && selectedFiles.length === 0">No files</span>
+          </div>
+
+          <div class="files__list"
+            *ngIf="selectedFiles.length > 0"
+            >
+            <a class="file-chip"
+              *ngFor="let f of selectedFiles"
+              [href]="'http://localhost:8085/api/issues/files/' + (selectedIssuerUserId || 0) + '/' + f"
+              target="_blank"
+                rel="noopener noreferrer"
+              >
+                📎 {{ f }}
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 40%: COMMENTS -->
+      <section class="col col--comments"
+        *ngIf="!(s.status==='PENDING')"
+        >
+        <h4 *ngIf="s.status==='INPROGRESS'">Write your comments</h4>
+
+        <div class="comments-section">
+          <!-- Commenting box -->
+          <div
+            class="comment-box"
+            *ngIf="s.status==='INPROGRESS'"
+            >
+            <textarea [(ngModel)]="newComment" placeholder="Write a comment..."></textarea>
+            <button (click)="submitComment()">Post</button>
+          </div>
+
+          <!-- Comment list -->
+          <div class="comment-list">
+            <h4>Comments</h4>
+            <div class="comment" *ngFor="let c of comments">
+              <div class="comment-header">
+                <span class="comment-header author">{{ c.author }}</span>
+                <span class="comment-header time">{{ c.time }}</span>
+                <!-- {{ c.author }} · {{ c.time }} -->
+              </div>
+              <div class="comment-body">{{ c.message }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- (Optional) place a comments list here later -->
+      </section>
+
+      <!-- 30%: ACTIONS / REASONS -->
+      <section class="col col--actions">
+        <h4>Actions</h4>
+
+        <!-- Reasons (contextual) – moved here -->
+        <ng-container [ngSwitch]="s.status">
+          <!-- When already COMPLETED: show only completed reason -->
+          <div class="row" *ngSwitchCase="'COMPLETED'">
+            <label>Completed reason:</label>
+            <input type="text" [(ngModel)]="completeReason" placeholder="[optional]" />
+          </div>
+
+          <!-- When already REJECTED: show only rejection reason -->
+          <div class="row" *ngSwitchCase="'REJECTED'">
+            <label>Rejection reason:</label>
+            <input type="text" [(ngModel)]="rejectReason" placeholder="[optional]" />
+          </div>
+
+          <!-- When PENDING/INPROGRESS: allow both (fill whichever you’ll use) -->
+          <ng-container *ngSwitchDefault>
+            <div class="row">
+              <label>Completed reason:</label>
+              <input type="text" [(ngModel)]="completeReason" placeholder="[optional]" />
+            </div>
+            <div class="row">
+              <label>Rejection reason:</label>
+              <input type="text" [(ngModel)]="rejectReason" placeholder="[optional]" />
+            </div>
+          </ng-container>
+        </ng-container>
+      </section>
+
+    </div>
+
+
+    <footer class="details__footer">
+      <button class="primary" (click)="completeFromDetails()">Mark Completed</button>
+      <button class="primary danger" (click)="rejectFromDetails()">Reject</button>
+      <button class="primary muted" (click)="closeDetails()">Close</button>
+    </footer>
+  </div>
+</aside>

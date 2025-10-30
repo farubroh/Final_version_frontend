@@ -1,0 +1,259 @@
+<div class="crm-wrapper">
+  <!-- Left Sidebar -->
+  <aside class="sidebar collapsible">
+    <ul class="sidebar-icons">
+      <!-- Problem Status -->
+      <li (click)="showAllIssues()">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>Problem Status</span>
+      </li>
+
+      <!-- Conditionally display problem status sections -->
+      <li *ngIf="showingAllIssues">
+        <div
+          class="case-card"
+          [class.highlighted]="filterStatus === 'PENDING'"
+          (click)="setFilterStatus('PENDING')"
+        >
+          Pending - {{ pendingCount }}
+        </div>
+        <div
+          class="case-card"
+          [class.highlighted]="filterStatus === 'INPROGRESS'"
+          (click)="setFilterStatus('INPROGRESS')"
+        >
+          In Progress - {{ inProgressCount }}
+        </div>
+        <div
+          class="case-card"
+          [class.highlighted]="filterStatus === 'COMPLETED'"
+          (click)="setFilterStatus('COMPLETED')"
+        >
+          Completed - {{ completedCount }}
+        </div>
+        <div
+          class="case-card"
+          [class.highlighted]="filterStatus === 'REJECTED'"
+          (click)="setFilterStatus('REJECTED')"
+        >
+          Rejected - {{ rejectedCount }}
+        </div>
+      </li>
+
+      <!-- Categories (title row) -->
+      <li (click)="toggleCategories($event)" class="categories-header">
+        <i class="fa-solid fa-list"></i>
+        <span>Categories</span>
+
+        <!-- + Add category (don’t toggle the list) -->
+        <button class="add-category-btn" (click)="onAddCategory($event)" title="Add category">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+      </li>
+
+      <!-- Categories list (hide zero-count categories) -->
+      <li *ngIf="showingCategories">
+        <ng-container *ngFor="let category of categoryList">
+          <div
+            class="case-card"
+            *ngIf="getCategoryCount(category) > 0"
+            [class.highlighted]="selectedCategory === category"
+            (click)="selectCategory(category)"
+            
+          >
+            {{ category }} - {{ getCategoryCount(category) }}
+          </div>
+        </ng-container>
+      </li>
+
+      <!-- Other Sidebar Items -->
+      <li (click)="showGraph()">
+        <i class="fa-solid fa-chart-simple"></i>
+        <span>Graphical view</span>
+      </li>
+
+      <li (click)="showDevelopers()">
+        <i class="fa-solid fa-users-rectangle"></i>
+        <span>Developers view</span>
+      </li>
+
+      <!-- Developers list (like categories; includes Unassigned) -->
+      <li *ngIf="showingDevelopers">
+        
+
+        <div
+          class="case-card"
+          *ngFor="let dev of developerList"
+          [class.highlighted]="selectedDeveloperName === dev"
+          (click)="selectDeveloper(dev)"
+        >
+          {{ dev }} - {{ getDeveloperCount(dev) }}
+        </div>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-area">
+    <!-- Top Navigation -->
+    <header class="nav-header">
+      <h2 class="admin-title">Admin Dashboard</h2>
+      <div class="top-actions">
+        <input
+          type="text"
+          class="search-box"
+          placeholder="Enter your search"
+          [(ngModel)]="searchQuery"
+          (input)="searchConflictMessage = ''"
+        >
+        <button *ngIf="searchActive" class="clear-btn" (click)="clearSearch()">Clear</button>
+      </div>
+    </header>
+
+    <div class="lower-panels">
+      <div class="panel-box wide">
+        <h4 class="sticky-title">
+          {{
+            selectedDeveloperName
+              ? (selectedDeveloperName === '__UNASSIGNED__' ? 'Unassigned' : selectedDeveloperName)
+              : (selectedCategory ? selectedCategory : (filterStatus || 'All'))
+            | titlecase
+          }} Issues
+        </h4>
+
+        <!-- Search/status conflict notice -->
+        <div class="conflict" *ngIf="searchConflictMessage">
+          {{ searchConflictMessage }}
+        </div>
+
+        <div class="table-wrapper">
+          <table *ngIf="filteredIssues.length > 0">
+            <thead>
+              <tr>
+                <th>Issue No.</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Users Info</th>
+                <th>Issue Date</th>
+                <th>Assigned Developer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let issue of filteredIssues; let i = index"
+                  (click)="openIssue(issue)" [style.cursor]="'pointer'">
+                <td>{{ i + 1 }}</td>
+
+                <!-- Title -->
+                <td>{{ issue.title }}</td>
+
+                <!-- Category -->
+                <td>
+                  <span
+                    class="category-badge"
+                    [ngStyle]="{ 'background-color': getCategoryColor(issue.category), 'color': 'white' }"
+                  >
+                    {{ issue.category || 'No Category' }}
+                  </span>
+                </td>
+
+                <!-- Users Info (hover to show user details) -->
+                <td>
+                  <!-- User Info -->
+<div class="user-info"
+     [ngStyle]="{ 'text-align': 'left' }"
+     (mouseenter)="showUserDetails($event, issue.user)"
+     (mouseleave)="closeUserDetails()">
+  <span>{{ issue.user?.username }}</span>
+  <span [ngClass]="{
+      'status-pending': issue.status === 'PENDING',
+      'status-inprogress': issue.status === 'INPROGRESS',
+      'status-completed': issue.status === 'COMPLETED',
+      'status-rejected': issue.status === 'REJECTED'
+    }">
+    - {{ issue.status }}
+  </span>
+</div>
+
+                </td>
+
+                <!-- Issue date -->
+                <td>{{ issue.createdAt | date: 'dd MMM yyyy, hh:mm a' }}</td>
+
+                <!-- Assigned Developer column -->
+                <td>
+  <!-- View Button (when no developer assigned) -->
+  <button
+    *ngIf="!issue.developerName"
+    class="view-btn"
+    (click)="$event.stopPropagation(); openIssue(issue)"
+  >
+    View
+  </button>
+
+  <!-- Assigned Button (for assigned issues with developer) -->
+<button
+  *ngIf="issue.developerName"
+  class="assigned-btn"
+  [ngClass]="{
+    'completed-btn': issue.status === 'COMPLETED',
+    'rejected-btn': issue.status === 'REJECTED'
+  }"
+  (click)="$event.stopPropagation()"
+>
+  <!-- Conditional Text based on Status -->
+  <span *ngIf="issue.status === 'COMPLETED'">
+    Completed by: {{ issue.developerName }}
+  </span>
+  
+  <span *ngIf="issue.status === 'REJECTED'">
+    Rejected by: {{ issue.developerName }}
+  </span>
+
+  <span *ngIf="issue.status !== 'COMPLETED' && issue.status !== 'REJECTED'">
+    Assigned to: {{ issue.developerName }}
+  </span>
+</button>
+
+</td>
+
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Empty state (avoid flashing before cache finished on ALL) -->
+          <div *ngIf="filteredIssues.length === 0 && (hasLoadedCache || activeTab !== 'ALL') && !loading">
+            No {{ (filterStatus || 'matching') | lowercase }} issues found.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 🔍 Issue View Modal -->
+<app-issue-view-modal-admin
+  *ngIf="selectedIssue"
+  [issue]="selectedIssue"
+  (close)="selectedIssue = null"
+  (refresh)="fetchIssues()">
+</app-issue-view-modal-admin>
+
+<!-- 👤 Small, attached user popover -->
+<div
+  *ngIf="userPopoverVisible"
+  class="user-popover"
+  (click)="$event.stopPropagation()"
+  [ngStyle]="{ top: userPopoverY + 'px', left: userPopoverX + 'px' }"
+>
+  <div class="user-popover-header">
+    <span class="user-popover-name">{{ userPopoverData?.username || 'User' }}</span>
+    <button class="user-popover-close" (click)="closeUserDetails()">×</button>
+  </div>
+  <div class="user-popover-body">
+    <div class="row"><span class="k">Department:</span><span class="v">{{ userPopoverData?.department || '—' }}</span></div>
+    <div class="row"><span class="k">Designation:</span><span class="v">{{ userPopoverData?.designation || '—' }}</span></div>
+    <div class="row" *ngIf="userPopoverData?.email"><span class="k">Email:</span><span class="v">{{ userPopoverData?.email }}</span></div>
+    <div class="row" *ngIf="userPopoverData?.phone"><span class="k">Phone:</span><span class="v">{{ userPopoverData?.phone }}</span></div>
+  </div>
+  <div class="user-popover-arrow"></div>
+</div>

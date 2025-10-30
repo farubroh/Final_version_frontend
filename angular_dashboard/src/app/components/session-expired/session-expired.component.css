@@ -1,0 +1,77 @@
+.sesstion-bg {
+    background: #f2f1f1;
+    margin: auto;
+    text-align: center;
+}
+
+.sesion-brand {
+    background: #FFF;
+    padding-top: 10px;
+    border-bottom: 3px solid #018002;
+}
+
+.session-wrapper .title>a {
+    color: #017e00;
+    text-decoration: underline;
+}
+
+.session-wrapper .title {
+    font-size: 30px;
+    font-family: 'open_sanssemibold';
+    letter-spacing: -2px;
+    padding-top: 40px;
+}
+
+.session-wrapper .session-con {
+    font-size: 20px;
+}
+
+.session-wrapper .session-con>span {
+    font-weight: 700;
+    font-family: 'open_sanssemibold';
+}
+
+.session-copy-right {
+    border-top: 2px solid #018002;
+    font-size: 11px;
+    bottom: 0px;
+    color: #717171;
+    width: 40%;
+    margin: auto;
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+@media (min-width: 0px) and (max-width: 768px) {
+    .session-wrapper .title {
+        font-size: 20px;
+        letter-spacing: 0px;
+    }
+
+    .session-wrapper .session-con {
+        font-size: 16px;
+    }
+
+    .session-copy-right {
+        width: 100%;
+    }
+
+    .login-wrapper {
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+}
+
+@media (min-width: 0px) and (max-width: 400px) {
+    .sesion-brand .logo img {
+        width: 100%;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+}
+
+#countdown {
+    color: red;
+    font-size: 25px;
+    font-weight: bold;
+}

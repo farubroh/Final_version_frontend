@@ -1,0 +1,55 @@
+<div class="column">
+  <!-- Column Header -->
+  <div class="column-header">
+    <h3>{{ statusTitle[status] }}</h3>
+    <button class="column-menu-btn">
+      <i class="fa-solid fa-ellipsis"></i>
+    </button>
+  </div>
+
+  <!-- Drop Area -->
+  <div
+    cdkDropList
+    [cdkDropListData]="issues"
+    [cdkDropListConnectedTo]="connectedTo"
+    (cdkDropListDropped)="onDropWrapper($event)"
+    class="column-drop-area"
+    [id]="status"
+  >
+    <div
+      class="issue-card-wrapper"
+      *ngFor="let issue of issues; trackBy: trackById"
+    >
+      <app-issue-card
+        [issue]="issue"
+        cdkDrag
+        [cdkDragData]="issue"
+        (click)="onIssueClick(issue)"
+      ></app-issue-card>
+    </div>
+  </div>
+
+  <!-- Add Card Footer -->
+  <div class="add-card-footer" (click)="openCreateModal()">
+    <i class="fa-solid fa-plus"></i> Add a card
+  </div>
+
+  <!-- Issue View Modal -->
+  <app-issue-view-modal-user
+    *ngIf="selectedIssue"
+    [issue]="selectedIssue"
+    (close)="handleClose()"
+  ></app-issue-view-modal-user>
+</div>
+
+<!-- ===== Global Modal for Create Issue ===== -->
+<ng-container *ngIf="showCreateModal">
+  <!-- Overlay covering entire page -->
+  <div class="overlay-bg" (click)="closeCreateModal()"></div>
+
+  <!-- Create Issue Modal -->
+  <app-issue-form
+    (issueCreated)="closeCreateModal()"
+    class="create-modal"
+  ></app-issue-form>
+</ng-container>

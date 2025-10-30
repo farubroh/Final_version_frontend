@@ -1,0 +1,88 @@
+<div class="configuration-container space-y-6 p-6 bg-white rounded-lg shadow-sm">
+
+  <!-- Person & Role Input Section -->
+  <div class="input-section flex flex-wrap items-end gap-4">
+    <!-- PERSON DROPDOWN -->
+    <div class="input-group flex-1 min-w-[200px]">
+      <label for="person" class="block text-sm font-medium text-gray-700 mb-1">Person</label>
+      <select name="person" id="person" multiple class="hidden"
+              data-hs-select='{
+                "hasSearch": true,
+                "isSearchDirectMatch": false,
+                "searchPlaceholder": "Search...",
+                "searchClasses": "block w-full sm:text-sm border-gray-200 rounded-lg focus:border-blue-500 focus:ring-blue-500 py-1.5 sm:py-2 px-3",
+                "searchWrapperClasses": "bg-white p-2 -mx-1 sticky top-0",
+                "placeholder": "Select person...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:ring-2 focus:ring-blue-500",
+                "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-y-auto",
+                "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg focus:outline-hidden focus:bg-gray-100",
+                "optionTemplate": "<div class=\"flex items-center\"><div class=\"me-2\" data-icon></div><div><div class=\"hs-selected:font-semibold text-sm text-gray-800\" data-title></div></div><div class=\"ms-auto\"><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-4 text-blue-600\" xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" viewBox=\"0 0 16 16\"><path d=\"M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425Z\"/></svg></span></div></div>",
+                "extraMarkup": "<div class=\"absolute top-1/2 end-3 -translate-y-1/2\"><svg class=\"shrink-0 size-3.5 text-gray-500\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\"><path d=\"m7 15 5 5 5-5M7 9l5-5 5 5\"/></svg></div>"
+              }'>
+        <option value="">Choose</option>
+        <option value="1" data-hs-select-option='{"icon": "<img class=\"shrink-0 size-5 rounded-full\" src=\"https://images.unsplash.com/photo-1659482633369-9fe69af50bfb?auto=format&fit=facearea&facepad=3&w=320&h=320&q=80\" alt=\"James Collins\" />"}'>James Collins</option>
+        <option value="2" data-hs-select-option='{"icon": "<img class=\"shrink-0 size-5 rounded-full\" src=\"https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?auto=format&fit=facearea&facepad=3&w=320&h=320&q=80\" alt=\"Amanda Harvey\" />"}'>Amanda Harvey</option>
+        <option value="3" data-hs-select-option='{"icon": "<img class=\"shrink-0 size-5 rounded-full\" src=\"https://images.unsplash.com/photo-1601935111741-ae98b2b230b0?auto=format&fit=facearea&facepad=3&w=320&h=320&q=80\" alt=\"Costa Quinn\" />"}'>Costa Quinn</option>
+      </select>
+    </div>
+
+    <!-- ROLE DROPDOWN -->
+    <div class="input-group flex-1 min-w-[200px]">
+      <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+      <select name="role" id="role" class="hidden"
+              data-hs-select='{
+                "placeholder": "Select role...",
+                "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                "toggleClasses": "relative py-3 ps-4 pe-9 flex gap-x-2 text-nowrap w-full cursor-pointer bg-white border border-gray-200 rounded-lg text-start text-sm focus:ring-2 focus:ring-blue-500",
+                "dropdownClasses": "mt-2 z-50 w-full max-h-72 p-1 space-y-0.5 bg-white border border-gray-200 rounded-lg overflow-y-auto",
+                "optionClasses": "py-2 px-4 w-full text-sm text-gray-800 cursor-pointer hover:bg-gray-100 rounded-lg",
+                "optionTemplate": "<div class=\"flex items-center\"><div class=\"hs-selected:font-semibold text-sm text-gray-800\" data-title></div><div class=\"ms-auto\"><span class=\"hidden hs-selected:block\"><svg class=\"shrink-0 size-4 text-blue-600\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"currentColor\" viewBox=\"0 0 16 16\"><path d=\"M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425Z\"/></svg></span></div></div>"
+              }'>
+        <option value="">Choose</option>
+        <option value="Manager">Manager</option>
+        <option value="Developer">Developer</option>
+        <option value="Designer">Designer</option>
+        <option value="Tester">Tester</option>
+      </select>
+    </div>
+
+<!--    <button (click)="addPerson()" class="simpui-btn success sm">Add</button>-->
+    <button (click)="addPerson()" class="simpui-btn dark sm" id="iconDarkBtn" onclick="showSimpuiToast('Role added', getFormattedDateTime())">
+      Add
+    </button>
+    <div id="simpui-toast-container"></div>
+
+    <!--    <button (click)="addPerson()" class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition">-->
+<!--      Add-->
+<!--    </button>-->
+  </div>
+
+  <!-- TABLE SECTION -->
+  <table class="data-table w-full text-sm text-left border border-gray-200 rounded-lg overflow-hidden">
+    <thead class="bg-gray-100 text-gray-700">
+    <tr>
+      <th class="py-2 px-3">Person</th>
+      <th class="py-2 px-3">Role</th>
+      <th class="py-2 px-3 text-center">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let item of peopleList; let i = index" class="border-t hover:bg-gray-50">
+      <td class="px-3">{{ item.person }}</td>
+      <td class=" px-3">{{ item.role }}</td>
+      <td class=" px-3 text-center space-x-2">
+        <button (click)="editPerson(i)"  class="simpui-btn primary sm">Edit</button>
+<!--        <button (click)="editPerson(i)" class="px-4 py-1 bg-yellow-400 text-white rounded-md hover:bg-yellow-500 transition">-->
+<!--          Edit-->
+<!--        </button>-->
+
+        <button (click)="removePerson(i)" class="simpui-btn danger sm">Delete</button>
+<!--        <button (click)="removePerson(i)" class="px-4 py-1 bg-red-600 text-white rounded-md hover:bg-red-700 transition">-->
+<!--          Delete-->
+<!--        </button>-->
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

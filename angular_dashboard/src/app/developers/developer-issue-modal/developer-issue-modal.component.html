@@ -1,0 +1,102 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)" role="dialog" aria-modal="true">
+  <div class="modal-card animate-in" (keydown.escape)="close.emit()" tabindex="0">
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="title-wrap">
+        
+        <h2 class="title">{{ issue.category }}</h2>
+      </div>
+      <button class="btn-icon" (click)="close.emit()" aria-label="Close">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
+
+    <!-- Meta Row: ID / Status / CreatedBy / CreatedAt -->
+    <div class="meta">
+      
+      
+
+      
+      <div class="meta-item" *ngIf="issue.createdAt">
+        <span class="meta-label">Created: </span>
+        <span class="meta-value">{{ issue.createdAt | date:'medium' }}</span>
+      </div>
+    </div>
+
+    <!-- User Details (Problem‑1) -->
+    <div class="panel">
+      <div class="panel-title">Reporter</div>
+      <div class="user-row">
+        <div class="avatar" aria-hidden="true">{{ (issue.user?.username || '?') | slice:0:1 }}</div>
+        <div class="user-details">
+          <div class="user-primary">
+            {{ issue.user?.username || '-' }}
+          </div>
+          <div class="user-secondary">
+            {{ issue.user?.department || '-' }} • {{ issue.user?.designation || '-' }}
+          </div>
+         
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="panel">
+      <div class="panel-title">Description</div>
+      <div class="description-box">{{ issue.description }}</div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="panel" *ngIf="issue.files?.length">
+      <div class="panel-title">Attachments</div>
+      <div class="file-list">
+        <div class="file-chip" *ngFor="let file of issue.files">
+          <span class="file-icon" aria-hidden="true">📎</span>
+          <span class="file-name" [title]="file">{{ file }}</span>
+          <div class="file-actions">
+            <a class="chip-action" [href]="'http://localhost:8085/api/issues/files/' + issue.user?.id + '/' + file" target="_blank" rel="noopener">Open</a>
+            <a class="chip-action" [href]="'http://localhost:8085/api/issues/files/' + issue.user?.id + '/' + file" download>Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="panel" *ngIf="issue.status === 'INPROGRESS'">
+      <div class="panel-title">Actions</div>
+
+      <label class="input-label">Reassign Developer</label>
+      <div class="input-row">
+        <select [(ngModel)]="selectedDeveloperId" class="select">
+          <option [ngValue]="null">— Select Developer —</option>
+          <option *ngFor="let dev of developers" [ngValue]="dev.id" [disabled]="dev.id === currentDeveloperId">
+            {{ dev.username }} <span *ngIf="dev.id === currentDeveloperId">(You)</span>
+          </option>
+        </select>
+        <button class="btn ghost" (click)="reassign()" [disabled]="!selectedDeveloperId">Reassign</button>
+      </div>
+
+      <label class="input-label">Resolution Note</label>
+      <textarea [(ngModel)]="completionReason" class="textarea" rows="3" placeholder="Write how you resolved it..."></textarea>
+      <div class="btn-row">
+        <button class="btn success" (click)="markCompleted()" [disabled]="!completionReason">Mark as Completed</button>
+      </div>
+
+      <label class="input-label">Rejection Reason</label>
+      <textarea [(ngModel)]="rejectionReason" class="textarea" rows="2" placeholder="Why is this rejected?"></textarea>
+      <div class="btn-row">
+        <button class="btn danger" (click)="reject()" [disabled]="!rejectionReason">Reject</button>
+      </div>
+    </div>
+
+    <!-- Status Messages -->
+    <div *ngIf="issue.status === 'COMPLETED'" class="callout success">
+      <span class="callout-icon" aria-hidden="true">✅</span>
+      <span>{{ issue.completedReason || 'No reason provided' }}</span>
+    </div>
+    <div *ngIf="issue.status === 'REJECTED'" class="callout danger">
+      <span class="callout-icon" aria-hidden="true">❌</span>
+      <span>{{ issue.rejectionReason || 'No reason provided' }}</span>
+    </div>
+  </div>
+</div>

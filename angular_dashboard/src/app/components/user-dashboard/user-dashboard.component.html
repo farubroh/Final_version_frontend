@@ -1,0 +1,170 @@
+<div class="dashboard-wrapper">
+
+  <!-- Hamburger Menu (visible on tablet/mobile) -->
+  <div class="hamburger-menu" (click)="toggleSidebar()" [class.active]="isSidebarOpen">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- Left Sidebar: Tasks Filters + Notes -->
+  <aside class="sidebar" [class.active]="isSidebarOpen">
+    <div class="profile-section">
+      <div class="profile-icon">
+
+<!--        <img src="/Male.png" alt="">-->
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M12 2a5 5 0 1 1-5 5l.005-.217A5 5 0 0 1 12 2m2 12a5 5 0 0 1 5 5v1a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5z" stroke-width="0.5" stroke="currentColor" />
+        </svg>
+
+      </div>
+      <div class="profile-info">
+        <h2 class="welcome-text">Welcome, {{ user?.username || 'User' }}!</h2>
+      </div>
+    </div>
+
+    <div class="task-section">
+      <div class="task-tabs">
+        <button *ngFor="let status of statusTabs" (click)="onTabClick(status.key)"
+          [class.active]="activeTab === status.key">
+          {{ status.label }}
+        </button>
+      </div>
+
+      <!-- ⬆ Create Issue Button -->
+      <div class="create-issue-button-wrapper">
+        <button class="create-issue-button-modern" (click)="createIssue()">
+          <span class="icon">➕</span>
+          <span class="text">Create Issue</span>
+        </button>
+      </div>
+
+      <!-- ⬇ Notes Section -->
+      <!-- <div class="notes-list-modern">
+        <div class="note-card-modern green" *ngIf="totalPendingIssuesAllUsers >= 0">
+          <h4>Total Pending Issues</h4>
+          <p class="note-number">{{ totalPendingIssuesAllUsers }}</p>
+        </div>
+      </div> -->
+    </div>
+  </aside>
+
+
+  <!-- Center Section: Issues -->
+  <section class="center-section">
+    <!-- <div class="task-list-section"> -->
+    <!-- Mobile: show issues for any selected tab (including ALL) -->
+    <!-- Mobile View -->
+    <!-- <div *ngIf="isMobileView">
+        <div *ngFor="let issue of issues" (click)="handleView(issue)">
+          <div class="task-item">
+            <div class="task-main">
+              <div class="task-left">
+                <div class="task-title">{{ issue.title | slice:0:15 }}</div>
+              </div>
+              <div class="task-right">
+                <div class="category-badge">
+                  {{ issue.category || 'Uncategorized' }}
+                </div>
+              </div>
+            </div>
+            <div class="task-description">
+              {{ issue.description | slice:0:70 }}<span *ngIf="issue.description?.length > 70">...</span>
+            </div>
+            <button class="comment-btn" (click)="deleteIssue(issue, $event)">
+              <i class="bi bi-chat-left-dots"></i>
+            </button>
+            <button *ngIf="issue.status === 'PENDING'" class="delete-btn" (click)="deleteIssue(issue, $event)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div> -->
+
+
+    <!-- Desktop -->
+    <!-- <div *ngIf="!isMobileView"> -->
+    <!-- <div> -->
+    <div *ngFor="let issue of issues" (click)="handleView(issue)">
+      <div class="task-item">
+
+        <div class="task-main">
+
+          <div class="task-left">
+            <div class="task-title">
+              {{ issue.title }}
+            </div>
+          </div>
+
+          <div class="task-status">
+            <span
+              class="status-badge"
+              [ngClass]="issue.status.toLowerCase()"
+              [ngStyle]="{ 'background-color': getIssueStatusColor(issue.status), color: '#ffffff' }"
+              >
+              {{ issue.status }}
+            </span>
+          </div>
+
+          <div class="task-right">
+            <div class="category-badge">
+              <!-- [ngStyle]="{ 'background-color': getCategoryColor(issue.category), color: '#fff' }" -->
+              {{ issue.category || 'Uncategorized' }}
+            </div>
+            <div class="task-created-date">
+              <small>{{ issue.createdAt | date: 'short' }}</small>
+            </div>
+            <div class="comment_delete-buttons">
+
+              <!-- Comment button -->
+              <!-- <div class="comment-slot"
+                    *ngIf="(issue.status === 'PENDING' && issue.completedReason===null && issue.rejectionReason===null) || issue.status === 'INPROGRESS'"
+                    >
+                    <button
+                      class="comment-btn"
+                      (click)="onComment(issue, $event)"
+                      > -->
+              <!-- (click)="deleteIssue(issue, $event)" -->
+              <!-- <i class="bi bi-chat-left-dots"></i>
+                    </button>
+                  </div> -->
+
+              <!-- Delete Button -->
+              <div class="delete-slot" *ngIf="issue.status === 'PENDING'">
+                <button class="delete-btn" (click)="deleteIssue(issue, $event)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="task-description">
+          <!-- {{ issue.description | slice:0:75 }} -->
+          <span class="desc-text">{{ issue.description }}</span>
+          <!-- <span *ngIf="issue.description?.length > 70">...</span> -->
+        </div>
+      </div>
+    </div>
+    <!-- </div> -->
+
+
+    <!-- </div> -->
+  </section>
+
+
+
+  <!-- Create Issue Modal Slide-In -->
+  <app-issue-form *ngIf="showCreateModal" (issueCreated)="closeCreateModal()" (cancel)="closeCreateModal()"
+    class="slide-in-form">
+  </app-issue-form>
+
+  <!-- Overlay background -->
+  <div *ngIf="showCreateModal" class="overlay-bg" (click)="closeCreateModal()"></div>
+
+  <!-- Issue details modal -->
+  <app-issue-view-modal-user *ngIf="selectedIssue" [issue]="selectedIssue" (close)="handleClose()">
+  </app-issue-view-modal-user>
+</div>

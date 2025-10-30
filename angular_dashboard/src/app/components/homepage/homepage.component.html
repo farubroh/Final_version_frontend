@@ -1,0 +1,203 @@
+<div class="min-h-screen flex bg-gray-50 text-gray-800 font-inter">
+
+  <!-- LEFT SIDEBAR -->
+  <aside [class.w-72]="sidebarOpen" [class.w-16]="!sidebarOpen"
+         class="bg-white border-r border-gray-200 p-6 flex flex-col gap-6 fixed top-0 left-0 bottom-0 overflow-auto z-40 transition-all duration-300">
+
+    <!-- Logo + Hamburger -->
+    <div class="flex items-center justify-between">
+      <!-- Left side (logo + title) -->
+      <div class="flex items-center gap-3" *ngIf="sidebarOpen">
+        <img style="max-width: 15%" src="../assets/images/branding.jpg" alt="IUMS">
+        <h1 class="text-4xl font-semibold">IUMS</h1>
+      </div>
+
+      <!-- Button always visible -->
+      <button (click)="toggleSidebar()" class="p-2 ml-auto">
+        <i class="bi bi-list text-gray-700 text-xl"></i>
+      </button>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-4 flex-1">
+      <ul class="space-y-2 text-sm">
+
+        <!-- HelpDesk (always visible) -->
+        <!-- HelpDesk (always visible) -->
+        <li>
+          <div (click)="toggleMenu('product')"
+               class="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-100 relative">
+            <div class="flex items-center gap-3">
+              <i class="bi bi-box"></i>
+              <span *ngIf="sidebarOpen">HelpDesk</span>
+            </div>
+            <i *ngIf="sidebarOpen"
+               [class.bi-chevron-down]="expandedMenu==='product'"
+               [class.bi-chevron-up]="expandedMenu!=='product'"></i>
+          </div>
+
+          <!-- Expanded submenu -->
+          <ul *ngIf="expandedMenu==='product' && sidebarOpen"
+              class="mt-1 ml-6 space-y-1 border-l border-gray-200 relative pl-4">
+
+            <li class="relative group">
+              <div (click)="navigateToConfiguration()"
+                   class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span class="text-gray-700 font-medium">Configuration</span>
+                </div>
+              </div>
+              <!-- Connector curve -->
+              <span class="absolute -left-[1.05rem] top-0 h-full w-4 border-l border-gray-200"></span>
+            </li>
+
+            <li class="relative group">
+              <div (click)="navigateToAdminDashboard()"
+                   class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span *ngIf="sidebarOpen" class="text-gray-700 font-medium">Admin Dashboard</span>
+                </div>
+              </div>
+              <span class="absolute -left-[1.05rem] top-0 h-full w-4 border-l border-gray-200"></span>
+            </li>
+
+            <li class="relative group">
+              <div (click)="navigateToUserDashboard()"
+                   class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span *ngIf="sidebarOpen" class="text-gray-700 font-medium">User Dashboard</span>
+                </div>
+              </div>
+              <span class="absolute -left-[1.05rem] top-0 h-full w-4 border-l border-gray-200"></span>
+            </li>
+
+            <li class="relative group">
+              <div (click)="navigateToDeveloperDashboard()"
+                   class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
+                <div class="flex items-center gap-3">
+                  <span *ngIf="sidebarOpen" class="text-gray-700 font-medium">Developer Dashboard</span>
+                </div>
+              </div>
+              <span class="absolute -left-[1.05rem] top-0 h-full w-4 border-l border-gray-200"></span>
+            </li>
+          </ul>
+        </li>
+
+
+      </ul>
+    </nav>
+  </aside>
+
+
+  <!-- MAIN CONTENT -->
+  <main class="flex-1 p-6 lg:p-8 overflow-y-auto ml-72">
+    <!-- Topbar -->
+    <div class="flex items-center justify-between mb-6 gap-4">
+      <div class="flex items-center gap-4">
+
+        <div class="relative w-full max-w-2xl">
+          <input
+            class="w-full rounded-full border border-gray-200 px-5 py-3 text-sm placeholder-gray-400 shadow-sm"
+            placeholder="Search anything..."/>
+          <i class="bi bi-search absolute right-4 top-3.5 text-gray-400"></i>
+        </div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="px-4 py-2 rounded-full bg-black text-white shadow">LogOut</button>
+        <button class="w-10 h-10 rounded-full bg-white shadow flex items-center justify-center">
+          <i class="bi bi-bell"></i>
+        </button>
+        <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full">
+          <svg class="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20"
+               xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview Section -->
+
+
+    <!-- Overview Cards -->
+
+    <section *ngIf="showConfiguration">
+      <app-configuration></app-configuration> <!-- Embed ConfigurationComponent here -->
+    </section>
+    <section *ngIf="!showConfiguration" class="grid grid-cols-12 gap-6">
+      <div class="col-span-8">
+        <div class="mt-6 bg-white border border-gray-100 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+
+          <div class="relative w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+            <svg class="absolute w-12 h-12 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+          </div>
+
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <div>
+                <div class="text-lg font-semibold">{{ user.name }}</div>
+                <div class="text-sm text-gray-500">{{ user.designation }}</div>
+                <div class="text-sm text-gray-400 mt-2"><i class="bi bi-envelope mr-2"></i>{{ user.email }}</div>
+                <div class="text-sm text-gray-400"><i class="bi bi-building mr-2"></i>{{ user.university }}</div>
+              </div>
+              <div class="flex flex-col items-end gap-2">
+                <button class="px-3 py-1 rounded-full bg-black text-white text-sm">Message</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="col-span-4">
+        <aside class="sticky top-6 space-y-6">
+          <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <h4 class="font-semibold mb-3">Comments</h4>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <img src="https://randomuser.me/api/portraits/women/44.jpg" class="w-10 h-10 rounded-full"/>
+                <div>
+                  <div class="text-sm font-medium">Joyce <span class="text-xs text-gray-400">on Bento Pro 2.0</span></div>
+                  <div class="text-gray-500 text-sm mt-1">Great work! When HTML version will be available? ⚡</div>
+                  <div class="text-xs text-gray-400 mt-1">09:00 AM</div>
+                </div>
+              </div>
+              <div class="flex items-start gap-3">
+                <img src="https://randomuser.me/api/portraits/men/22.jpg" class="w-10 h-10 rounded-full"/>
+                <div>
+                  <div class="text-sm font-medium">Gladyce <span class="text-xs text-gray-400">on Food Delivery App</span></div>
+                  <div class="text-gray-500 text-sm mt-1">Thanks for the design inspiration.</div>
+                  <div class="text-xs text-gray-400 mt-1">10:30 AM</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <!-- SIDEBAR TEMPLATE -->
+  <ng-template #sidebarContent>
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-md bg-gray-200 flex items-center justify-center">
+        <i class="bi bi-grid-3x3-gap-fill text-gray-700"></i>
+      </div>
+      <h1 class="text-lg font-semibold">IUMS</h1>
+    </div>
+
+    <nav class="mt-4 flex-1">
+      <ul class="space-y-2 text-sm">
+        <li>
+          <a class="flex items-center gap-3 p-3 rounded-lg bg-gray-100 cursor-pointer">
+            <i class="bi bi-window-stack"></i> <span>HelpDesk</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </ng-template>
+
+</div>

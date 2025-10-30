@@ -1,0 +1,111 @@
+<div class="ticket-wrapper">
+  <div class="top-bar">
+    <h2>Create Support</h2>
+  </div>
+
+  <!-- Contact Support + Category in the Same Row -->
+  <div class="form-row">
+    <!-- Contact Support Button -->
+    <div class="support-section">
+      <button class="modern-button" type="button" (click)="toggleSupportDetails()">
+        💬 Common problems
+      </button>
+    </div>
+
+    <!-- Category Dropdown (SINGLE select — no nesting) -->
+    <div class="tt">
+      <label for="category" class="sr-only">Category</label>
+      <!-- create-issue.component.html -->
+<select [(ngModel)]="form.category" name="category" id="category" required>
+  <option [ngValue]="''" disabled selected>Select a category</option>
+  <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">
+    {{ cat.categoryName }}
+  </option>
+</select>
+
+    </div>
+  </div>
+
+  <!-- Support Details Below -->
+  <div *ngIf="showSupportDetails" class="support-details">
+    <ul>
+      <li><strong>Quota Issue:</strong> Visit Registrar Office (Level-2, Block-D)</li>
+      <li><strong>Payment Issue:</strong> Visit Treasurer Office (Level-5, Block-D)</li>
+      <li><strong>Edumail Issue:</strong> Visit 7B04 (Level-6, Block-B)</li>
+      <li><strong>Result/CGPA issue:</strong> Visit CoE office (Level-4, Block-B)</li>
+      <li><strong>Re-admission Issue:</strong> Ask Department Advisor</li>
+      <li><strong>Still not solved? Create Support Ticket</strong></li>
+    </ul>
+  </div>
+
+  <!-- Ticket Form -->
+  <form class="ticket-form" (ngSubmit)="handleSubmit()" enctype="multipart/form-data">
+    <!-- Title -->
+    <div class="form-group">
+      <label for="title">Title*</label>
+      <input
+        type="text"
+        [(ngModel)]="form.title"
+        name="title"
+        id="title"
+        placeholder="Enter here..."
+        required
+      />
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description*</label>
+      <textarea
+        [(ngModel)]="form.description"
+        name="description"
+        id="description"
+        maxlength="120"
+        placeholder="Let us know your thoughts..."
+        required
+        (input)="adjustTextareaHeight($event)"
+      ></textarea>
+    </div>
+
+    <!-- File Upload -->
+    <div class="form-group">
+      <button type="button" class="upload-button" (click)="fileInput.click()">
+        📎 Upload Attachment
+      </button>
+
+      <input
+        #fileInput
+        type="file"
+        (change)="onFileSelected($event)"
+        multiple
+        hidden
+      />
+
+      <!-- File Preview List -->
+      <div class="file-preview" *ngIf="filePreviews.length">
+        <div *ngFor="let file of filePreviews; let i = index" class="file-thumb">
+          <div class="file-icon">
+            <img *ngIf="file.type?.startsWith('image')" [src]="file.url" alt="preview" />
+            <span *ngIf="!file.type?.startsWith('image')">📄</span>
+          </div>
+          <div class="file-info">
+            <span class="file-name">{{ file.name }}</span>
+            <button type="button" class="file-remove" (click)="removeFile(i)">✖</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Progress -->
+      <div *ngIf="uploadProgress > 0" class="progress-bar">
+        <div class="progress" [style.width.%]="uploadProgress"></div>
+      </div>
+      <p *ngIf="uploadSummary && !isUploading" class="upload-summary">{{ uploadSummary }}</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button type="submit" class="submit-btn">Create Ticket</button>
+    </div>
+  </form>
+</div>

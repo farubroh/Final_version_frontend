@@ -1,0 +1,35 @@
+<div class="login-container">
+  <div class="login-form">
+    <h2>🔐 Helpdesk Login</h2>
+
+    <div *ngIf="error" class="error-message">{{ error }}</div>
+
+    <form (ngSubmit)="handleSubmit($event)">
+      <div class="input-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          name="username"
+          id="username"
+          [(ngModel)]="credentials.username"
+          placeholder="Enter your username"
+          required
+        />
+      </div>
+
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          [(ngModel)]="credentials.password"
+          placeholder="Enter your password"
+          required
+        />
+      </div>
+
+      <button type="submit" class="submit-button">🔓 Login</button>
+    </form>
+  </div>
+</div>

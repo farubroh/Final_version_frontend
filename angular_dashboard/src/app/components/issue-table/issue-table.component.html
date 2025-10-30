@@ -1,0 +1,47 @@
+<div class="table-wrapper fade-in">
+  <h2 class="table-title">📋 {{ status }} Issues</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>SerialId</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Issuer</th>
+        <th>Role</th>
+        <th *ngIf="status === 'PENDING'">Assign To</th>
+        <th *ngIf="status === 'INPROGRESS'">Assignee</th>
+        <th *ngIf="status === 'COMPLETED'">Done By</th>
+        <th *ngIf="status === 'REJECTED'">Rejected By</th>
+        <th>Status</th>
+        <th *ngIf="status === 'PENDING'">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let issue of issues; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ issue.serialId }}</td>
+        <td>{{ issue.title }}</td>
+        <td>{{ issue.description }}</td>
+        <td>{{ issue.user.username }}</td>
+        <td>{{ issue.user.role }}</td>
+        <td *ngIf="status === 'PENDING'">{{ issue.developerName || '-' }}</td>
+        <td *ngIf="status === 'INPROGRESS'">{{ issue.developerName || '-' }}</td>
+        <td *ngIf="status === 'COMPLETED'">{{ issue.developerName || '-' }}</td>
+        <td *ngIf="status === 'REJECTED'">{{ issue.developerName || '-' }}</td>
+        <td><span class="badge" [ngClass]="status.toLowerCase()">{{ issue.status }}</span></td>
+        <td *ngIf="status === 'PENDING'">
+          <button (click)="openAssignModal(issue)">🧑‍💻 Assign</button>
+          <button (click)="openRejectModal(issue)" class="reject">❌ Reject</button>
+        </td>
+      </tr>
+      <tr *ngIf="issues.length === 0">
+        <td colspan="12" class="empty-msg">No {{ status }} issues found.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <app-assign-modal *ngIf="selectedIssue" [issue]="selectedIssue" (close)="closeAssignModal()" (assigned)="refresh()"></app-assign-modal>
+  <app-reject-modal *ngIf="selectedRejectIssue" [issue]="selectedRejectIssue" [user]="user" (close)="closeRejectModal()" (rejected)="refresh()"></app-reject-modal>
+</div>
