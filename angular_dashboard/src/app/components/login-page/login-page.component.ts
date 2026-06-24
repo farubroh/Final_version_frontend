@@ -37,29 +37,40 @@ export class LoginPageComponent {
       password: this.credentials.password
     };
 
-    this.http.post<{ accessToken?: string; refreshToken?: string }>(
+    this.http.post<any>(
       `${this.AUTH_URL}/login`,
       payload
     ).subscribe({
-      next: (res) => {
-        // backend returns accessToken and refreshToken (AuthenticationResponse)
-        console.log(res);
+      next: (res: any) => {
         if (res && res.accessToken) {
-          // normalize shape expected by AuthenticationService.login()
-          const userWithTokens: any = {
+          localStorage.setItem('accessToken',  res.accessToken);
+          localStorage.setItem('refreshToken', res.refreshToken ?? '');
+          localStorage.setItem('userId',       res.userId       ?? '');
+          localStorage.setItem('name',         res.name         ?? '');
+          localStorage.setItem('eduEmail',     res.eduEmail     ?? '');
+          localStorage.setItem('personalEmail',res.personalEmail ?? '');
+          localStorage.setItem('isStudent',    String(res.isStudent));
+
+          if (res.isStudent) {
+            // Student: store flat fields
+            localStorage.setItem('deptShortName',    res.deptShortName    ?? '');
+            localStorage.setItem('deptLongName',     res.deptLongName     ?? '');
+            localStorage.setItem('programShortName', res.programShortName ?? '');
+            localStorage.setItem('programLongName',  res.programLongName  ?? '');
+            localStorage.setItem('roleName',         res.roleName         ?? '');
+          } else {
+            // Employee: store full roleInfo array as JSON
+            localStorage.setItem('roleInfo', JSON.stringify(res.roleInfo ?? []));
+          }
+
+          this.authService.login({
             token: res.accessToken,
             refreshToken: res.refreshToken ?? null,
-            // optional: if you want to keep a small user object you could parse token or request user info
-          };
+          });
 
-          // AuthenticationService will persist tokens (access_token / refresh_token) and user data
-          this.authService.login(userWithTokens);
-
-          // navigate to home after login
           this.router.navigate(['/home']);
         } else {
           this.error = '❌ Invalid credentials or no token received';
-          console.error('Login response missing accessToken:', res);
         }
       },
       error: (err) => {

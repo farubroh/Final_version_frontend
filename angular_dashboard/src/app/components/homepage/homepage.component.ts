@@ -1,73 +1,123 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import {CommonModule} from '@angular/common';
-import {ConfigurationComponent} from '../configuration/configuration.component';
+import { CommonModule } from '@angular/common';
+import { ConfigurationComponent } from '../configuration/configuration.component';
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [CommonModule, ConfigurationComponent], // Import ConfigurationComponent here
+  imports: [CommonModule, ConfigurationComponent],
   templateUrl: './homepage.component.html',
   styleUrls: ['./homepage.component.css']
 })
-export class HomepageComponent {
+export class HomepageComponent implements OnInit {
   sidebarOpen = true;
   expandedMenu: string | null = 'product';
-  activeSidebar: string | null = 'dashboard';
-  showUserDetails = false;
-  selectedUser: any | null = null;
-  showConfiguration = false;  // Added this property to toggle content
+  showConfiguration = false;
+
+  // dropdown states
+  showNotifications = false;
+  showProfileMenu = false;
+  activeDeptId:string='';
+
+  // hardcoded notifications (replace with API later)
+  notifications = [
+    { id: 1, text: 'Your ticket #1042 has been resolved.', time: '2 min ago', read: false },
+    { id: 2, text: 'New announcement from ICT Center.', time: '1 hr ago', read: false },
+    { id: 3, text: 'System maintenance scheduled tonight.', time: '3 hrs ago', read: true },
+  ];
+
+  user = {
+    id: '', name: '', designation: '', email: '',
+    personalEmail: '', deptLongName: '', deptShortName: '',
+    programLongName: '', programShortName: '', university: 'AUST',
+  };
+
+  isStudent = false;
+  isHead = false;
+  isEmployee = false;
+
+  // employee multi-role support
+  roleInfo: any[] = [];
+  activeRoleIndex = 0;
 
   constructor(private router: Router) {}
 
-  users = [
-    { id: 1, name: 'Gladlyce Brown', designation: 'Product Manager', email: 'gladyce@example.com', university: 'AUST', avatar: 'https://randomuser.me/api/portraits/women/65.jpg' },
-    { id: 2, name: 'Elbert Smith', designation: 'UI/UX Designer', email: 'elbert@example.com', university: 'AUST', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' },
-  ];
+  ngOnInit() {
+    const name      = localStorage.getItem('name')          ?? '';
+    const email     = localStorage.getItem('eduEmail')      ?? '';
+    const isStudent = localStorage.getItem('isStudent')     === 'true';
 
-  user = { name: 'Omar Rahman', designation: 'Helpdesk Specialist', email: 'omar@example.com', university: 'AUST', avatar: 'https://randomuser.me/api/portraits/men/32.jpg' };
+    this.isStudent = isStudent;
 
-  toggleSidebar() {
-    this.sidebarOpen = !this.sidebarOpen;
+    if (isStudent) {
+      this.user = {
+        id:               localStorage.getItem('userId')          ?? '',
+        name,
+        email,
+        personalEmail:    localStorage.getItem('personalEmail')   ?? '',
+        deptLongName:     localStorage.getItem('deptLongName')    ?? '',
+        deptShortName:    localStorage.getItem('deptShortName')   ?? '',
+        programLongName:  localStorage.getItem('programLongName') ?? '',
+        programShortName: localStorage.getItem('programShortName') ?? '',
+        designation:      'Student',
+        university:       'AUST',
+      };
+      this.isHead     = false;
+      this.isEmployee = false;
+
+    } else {
+      const raw = localStorage.getItem('roleInfo');
+      this.roleInfo = raw ? JSON.parse(raw) : [];
+      this.applyRole(0); // start with first role (isPrimaryRole)
+    }
   }
 
-  toggleMenu(menu: string) {
-    this.expandedMenu = this.expandedMenu === menu ? null : menu;
+  applyRole(index: number) {
+    this.activeRoleIndex = index;
+    const r = this.roleInfo[index];
+    if (!r) return;
+
+    this.isHead     = r.isHead === true;
+    this.isEmployee = !this.isHead;
+    this.activeDeptId = r.deptId ?? '';   // ← ADD THIS
+
+    this.user = {
+      id:               localStorage.getItem('userId')        ?? '',
+      name:             localStorage.getItem('name')          ?? '',
+      email:            localStorage.getItem('eduEmail')      ?? '',
+      personalEmail:    localStorage.getItem('personalEmail') ?? '',
+      designation:      r.designationName,
+      deptLongName:     r.deptLongName,
+      deptShortName:    r.deptShortName,
+      programLongName:  '',
+      programShortName: '',
+      university:       'AUST',
+    };
+
+    this.showProfileMenu = false;
   }
 
-  toggleUserDetails() {
-    this.showUserDetails = !this.showUserDetails;
+  toggleSidebar()        { this.sidebarOpen = !this.sidebarOpen; }
+  toggleMenu(menu: string) { this.expandedMenu = this.expandedMenu === menu ? null : menu; }
+
+  toggleNotifications() {
+    this.showNotifications = !this.showNotifications;
+    this.showProfileMenu = false;
   }
 
-  setActiveSidebar(key: string) {
-    this.activeSidebar = key;
+  toggleProfileMenu() {
+    this.showProfileMenu = !this.showProfileMenu;
+    this.showNotifications = false;
   }
 
-  selectUser(u: any) {
-    this.selectedUser = u;
+  get unreadCount() {
+    return this.notifications.filter(n => !n.read).length;
   }
 
-  closeUserDetails() {
-    this.selectedUser = null;
-  }
+  navigateToUserDashboard()  { this.showConfiguration = false; this.router.navigate(['/dashboard']); }
+  navigateToAdminDashboard() { this.showConfiguration = false; this.router.navigate(['/admin']); }
+  navigateToConfiguration()  { this.showConfiguration = true; }
 
-  logout() {
-    // Implement your logout logic here
-  }
-
-  navigateToUserDashboard() {
-    this.router.navigate(['/dashboard']);  // This should navigate to the user dashboard
-  }
-
-  navigateToAdminDashboard() {
-    this.router.navigate(['/admin']);  // This should navigate to the admin dashboard
-  }
-
-  navigateToDeveloperDashboard() {
-    this.router.navigate(['/developer']);  // This should navigate to the developer dashboard
-  }
-
-  navigateToConfiguration() {
-    this.showConfiguration = true; // Show the configuration content
-  }
+  logout() { localStorage.clear(); this.router.navigate(['/login']); }
 }
