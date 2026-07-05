@@ -1,73 +1,74 @@
-label.btn span {
-    font-size: 1.5em;
-}
+/* ===== Mobile fixes: footer position + logo/title shape ===== */
 
-label input[type="radio"]~i.fa.fa-circle-o {
-    color: #c8c8c8;
-    display: inline;
-}
+@media (max-width: 767px) {
 
-label input[type="radio"]~i.fa.fa-dot-circle-o {
+  html, body {
+    height: 100%;
+  }
+
+  .login-right {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  /* Logo + title row */
+  .login-right > .row:first-of-type {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 20px 16px 10px;
+    gap: 14px;
+    flex: 0 0 auto; /* prevent this row from growing/shrinking */
+  }
+
+  .login-head-title {
     display: none;
-}
+  }
 
-label input[type="radio"]:checked~i.fa.fa-circle-o {
-    display: none;
-}
+  .branding {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0;
+  }
 
-label input[type="radio"]:checked~i.fa.fa-dot-circle-o {
-    color: #7AA3CC;
-    display: inline;
-}
+  .branding img {
+    height: 55px;
+    width: auto;
+  }
 
-label:hover input[type="radio"]~i.fa {
-    color: #7AA3CC;
-}
+  .col-sm-9.col-xs-10 {
+    flex: 1 1 auto;
+    width: auto;
+    padding: 0;
+    border-left: 1px solid #ccc;
+    padding-left: 14px;
+  }
 
-div[data-toggle="buttons"] label.active {
-    color: #7AA3CC;
-}
+  .IUMS-title {
+    font-size: 1.6rem;
+    line-height: 1.1;
+    margin: 0;
+  }
 
-div[data-toggle="buttons"] label {
-    display: inline-block;
-    padding: 6px 12px;
-    margin-bottom: 0;
-    font-size: 14px;
-    font-weight: normal;
-    line-height: 2em;
-    text-align: left;
-    white-space: nowrap;
-    vertical-align: top;
-    cursor: pointer;
-    background-color: none;
-    border: 0px solid #c8c8c8;
-    border-radius: 3px;
-    color: #c8c8c8;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    -o-user-select: none;
-    user-select: none;
-}
+  .IUMS-slogan {
+    font-size: 0.7rem;
+    line-height: 1.2;
+    display: block;
+    color: #888;
+  }
 
-div[data-toggle="buttons"] label:hover {
-    color: #7AA3CC;
-}
+  /* signInDiv shouldn't grow/shrink either */
+  .signInDiv {
+    flex: 0 0 auto;
+  }
 
-div[data-toggle="buttons"] label:active,
-div[data-toggle="buttons"] label.active {
-    -webkit-box-shadow: none;
-    box-shadow: none;
-}
+  /* Footer pinned to bottom */
+  .copy-right {
+    margin-top: auto;
+    margin-bottom: 20px;
+  }
 
-.blink_me {
-    animation: blinker 2s linear infinite;
-    color: red;
-    font-weight: bold;
-}
-
-@keyframes blinker {
-    50% {
-        opacity: 0;
-    }
 }

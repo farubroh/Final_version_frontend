@@ -1,170 +1,126 @@
-<div class="dashboard-wrapper">
+<div class="ud3-split" [class.split-active]="selectedIssue">
 
-  <!-- Hamburger Menu (visible on tablet/mobile) -->
-  <div class="hamburger-menu" (click)="toggleSidebar()" [class.active]="isSidebarOpen">
-    <span></span>
-    <span></span>
-    <span></span>
+  <div class="ud3-table-side">
+    <div class="ud3-wrap">
+
+      <!-- Header -->
+      <div class="ud3-header">
+        <div class="flex items-center gap-3">
+          <h1 class="ud3-heading">My Issues</h1>
+          <span class="ud3-count-badge">{{ issues.length }}</span>
+        </div>
+
+        <span *ngIf="filterStatus !== 'ALL'" class="ud3-filter-pill">
+          <span class="ud3-dot" [ngClass]="'dot-' + filterStatus.toLowerCase()"></span>
+          {{ filterStatus | titlecase }}
+          <button (click)="clearFilter()" class="ud3-filter-clear" aria-label="Clear filter">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </span>
+      </div>
+
+      <!-- Empty state -->
+      <div *ngIf="issues.length === 0 && !loading" class="ud3-empty">
+        <div class="ud3-empty-icon"><i class="bi bi-inbox"></i></div>
+        <p class="ud3-empty-title">No issues found</p>
+        <p class="ud3-empty-sub">
+          You have no {{ filterStatus === 'ALL' ? '' : (filterStatus.toLowerCase() + ' ') }}tickets yet
+        </p>
+      </div>
+
+      <!-- Table -->
+      <div class="ud3-table-card" *ngIf="issues.length > 0 || loading">
+        <table class="ud3-table">
+          <thead>
+          <tr>
+            <th>Ticket ID</th>
+            <th>Subject</th>
+            <th>Assigned To</th>
+            <th>Created</th>
+            <th class="text-right">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <!-- Loading skeleton rows -->
+          <ng-container *ngIf="loading">
+            <tr *ngFor="let i of [1,2,3,4,5,6]" class="ud3-skeleton-row">
+              <td colspan="5"><div class="ud3-skeleton"></div></td>
+            </tr>
+          </ng-container>
+
+          <!-- Grouped view (All) -->
+          <ng-container *ngIf="!loading && filterStatus === 'ALL'">
+            <ng-container *ngFor="let group of groupedSections">
+              <tr class="ud3-group-row">
+                <td colspan="5">
+                  <span class="ud3-dot" [ngClass]="'dot-' + group.key.toLowerCase()"></span>
+                  {{ group.label }}
+                  <span class="ud3-group-count">{{ group.items.length }}</span>
+                </td>
+              </tr>
+              <tr class="ud3-row" *ngFor="let issue of group.items" (click)="handleView(issue)">
+                <ng-container *ngTemplateOutlet="rowCells; context: { issue: issue }"></ng-container>
+              </tr>
+            </ng-container>
+          </ng-container>
+
+          <!-- Flat view (single status) -->
+          <ng-container *ngIf="!loading && filterStatus !== 'ALL'">
+            <tr class="ud3-row" *ngFor="let issue of issues" (click)="handleView(issue)">
+              <ng-container *ngTemplateOutlet="rowCells; context: { issue: issue }"></ng-container>
+            </tr>
+          </ng-container>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Shared row cells -->
+      <ng-template #rowCells let-issue="issue">
+        <td class="ud3-ticket-id">
+          {{ issue.serialId || issue.id }}
+        </td>
+        <td class="ud3-subject">{{ issue.title }}</td>
+        <td class="ud3-assigned">
+          <span *ngIf="issue.status !== 'PENDING'">{{ getAssignedLabel(issue) }}</span>
+        </td>
+        <td class="ud3-date">{{ issue.createdAt | date: 'd MMM, yyyy' }}</td>
+        <td class="ud3-actions text-right" (click)="$event.stopPropagation()">
+          <button class="ud3-icon-btn" (click)="handleView(issue)" aria-label="View issue" data-tooltip="View">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button *ngIf="issue.status === 'PENDING'"
+                  class="ud3-icon-btn" (click)="editIssue(issue)" aria-label="Edit issue" data-tooltip="Edit">
+            <i class="bi bi-pencil"></i>
+          </button>
+          <button *ngIf="issue.status === 'PENDING'"
+                  class="ud3-icon-btn ud3-icon-btn-danger" (click)="deleteIssue(issue, $event)" aria-label="Delete issue" data-tooltip="Delete">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </td>
+      </ng-template>
+
+      <div id="simpui-toast-container"></div>
+
+    </div> <!-- /.ud3-wrap -->
+  </div> <!-- /.ud3-table-side -->
+
+  <!-- Detail panel wrapper stays in the DOM always so width/opacity can animate both ways -->
+  <div class="ud3-detail-side">
+    <app-issue-view-modal-user
+      [issue]="selectedIssue"
+      (close)="handleClose()">
+    </app-issue-view-modal-user>
   </div>
 
-  <!-- Left Sidebar: Tasks Filters + Notes -->
-  <aside class="sidebar" [class.active]="isSidebarOpen">
-    <div class="profile-section">
-      <div class="profile-icon">
+</div> <!-- /.ud3-split -->
 
-<!--        <img src="/Male.png" alt="">-->
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M12 2a5 5 0 1 1-5 5l.005-.217A5 5 0 0 1 12 2m2 12a5 5 0 0 1 5 5v1a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5z" stroke-width="0.5" stroke="currentColor" />
-        </svg>
+<!-- Create Issue Modal (unrelated to the split view — stays a true overlay) -->
+<app-issue-form *ngIf="showCreateModal"
+                (issueCreated)="closeCreateModal()"
+                (cancel)="closeCreateModal()"
+                class="ud-slide-form">
+</app-issue-form>
 
-      </div>
-      <div class="profile-info">
-        <h2 class="welcome-text">Welcome, {{ user?.username || 'User' }}!</h2>
-      </div>
-    </div>
-
-    <div class="task-section">
-      <div class="task-tabs">
-        <button *ngFor="let status of statusTabs" (click)="onTabClick(status.key)"
-          [class.active]="activeTab === status.key">
-          {{ status.label }}
-        </button>
-      </div>
-
-      <!-- ⬆ Create Issue Button -->
-      <div class="create-issue-button-wrapper">
-        <button class="create-issue-button-modern" (click)="createIssue()">
-          <span class="icon">➕</span>
-          <span class="text">Create Issue</span>
-        </button>
-      </div>
-
-      <!-- ⬇ Notes Section -->
-      <!-- <div class="notes-list-modern">
-        <div class="note-card-modern green" *ngIf="totalPendingIssuesAllUsers >= 0">
-          <h4>Total Pending Issues</h4>
-          <p class="note-number">{{ totalPendingIssuesAllUsers }}</p>
-        </div>
-      </div> -->
-    </div>
-  </aside>
-
-
-  <!-- Center Section: Issues -->
-  <section class="center-section">
-    <!-- <div class="task-list-section"> -->
-    <!-- Mobile: show issues for any selected tab (including ALL) -->
-    <!-- Mobile View -->
-    <!-- <div *ngIf="isMobileView">
-        <div *ngFor="let issue of issues" (click)="handleView(issue)">
-          <div class="task-item">
-            <div class="task-main">
-              <div class="task-left">
-                <div class="task-title">{{ issue.title | slice:0:15 }}</div>
-              </div>
-              <div class="task-right">
-                <div class="category-badge">
-                  {{ issue.category || 'Uncategorized' }}
-                </div>
-              </div>
-            </div>
-            <div class="task-description">
-              {{ issue.description | slice:0:70 }}<span *ngIf="issue.description?.length > 70">...</span>
-            </div>
-            <button class="comment-btn" (click)="deleteIssue(issue, $event)">
-              <i class="bi bi-chat-left-dots"></i>
-            </button>
-            <button *ngIf="issue.status === 'PENDING'" class="delete-btn" (click)="deleteIssue(issue, $event)">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </div>
-      </div> -->
-
-
-    <!-- Desktop -->
-    <!-- <div *ngIf="!isMobileView"> -->
-    <!-- <div> -->
-    <div *ngFor="let issue of issues" (click)="handleView(issue)">
-      <div class="task-item">
-
-        <div class="task-main">
-
-          <div class="task-left">
-            <div class="task-title">
-              {{ issue.title }}
-            </div>
-          </div>
-
-          <div class="task-status">
-            <span
-              class="status-badge"
-              [ngClass]="issue.status.toLowerCase()"
-              [ngStyle]="{ 'background-color': getIssueStatusColor(issue.status), color: '#ffffff' }"
-              >
-              {{ issue.status }}
-            </span>
-          </div>
-
-          <div class="task-right">
-            <div class="category-badge">
-              <!-- [ngStyle]="{ 'background-color': getCategoryColor(issue.category), color: '#fff' }" -->
-              {{ issue.category || 'Uncategorized' }}
-            </div>
-            <div class="task-created-date">
-              <small>{{ issue.createdAt | date: 'short' }}</small>
-            </div>
-            <div class="comment_delete-buttons">
-
-              <!-- Comment button -->
-              <!-- <div class="comment-slot"
-                    *ngIf="(issue.status === 'PENDING' && issue.completedReason===null && issue.rejectionReason===null) || issue.status === 'INPROGRESS'"
-                    >
-                    <button
-                      class="comment-btn"
-                      (click)="onComment(issue, $event)"
-                      > -->
-              <!-- (click)="deleteIssue(issue, $event)" -->
-              <!-- <i class="bi bi-chat-left-dots"></i>
-                    </button>
-                  </div> -->
-
-              <!-- Delete Button -->
-              <div class="delete-slot" *ngIf="issue.status === 'PENDING'">
-                <button class="delete-btn" (click)="deleteIssue(issue, $event)">
-                  <i class="bi bi-trash"></i>
-                </button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-        <div class="task-description">
-          <!-- {{ issue.description | slice:0:75 }} -->
-          <span class="desc-text">{{ issue.description }}</span>
-          <!-- <span *ngIf="issue.description?.length > 70">...</span> -->
-        </div>
-      </div>
-    </div>
-    <!-- </div> -->
-
-
-    <!-- </div> -->
-  </section>
-
-
-
-  <!-- Create Issue Modal Slide-In -->
-  <app-issue-form *ngIf="showCreateModal" (issueCreated)="closeCreateModal()" (cancel)="closeCreateModal()"
-    class="slide-in-form">
-  </app-issue-form>
-
-  <!-- Overlay background -->
-  <div *ngIf="showCreateModal" class="overlay-bg" (click)="closeCreateModal()"></div>
-
-  <!-- Issue details modal -->
-  <app-issue-view-modal-user *ngIf="selectedIssue" [issue]="selectedIssue" (close)="handleClose()">
-  </app-issue-view-modal-user>
-</div>
+<div *ngIf="showCreateModal" class="ud-overlay" (click)="closeCreateModal()"></div>

@@ -18,8 +18,8 @@
     <!-- Sidebar Menu -->
     <nav class="mt-4 flex-1">
       <ul class="space-y-2 text-sm">
-
         <li>
+          <!-- Support System Menu Header -->
           <div (click)="toggleMenu('product')"
                class="flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gray-100">
             <div class="flex items-center gap-3">
@@ -31,62 +31,201 @@
                [class.bi-chevron-up]="expandedMenu !== 'product'"></i>
           </div>
 
+          <!-- Support System Menu Items -->
           <ul *ngIf="expandedMenu === 'product' && sidebarOpen"
               class="mt-1 ml-6 space-y-1 border-l border-gray-200 pl-4">
 
-            <!-- STUDENT: only Dashboard -->
-            <ng-container *ngIf="isStudent">
-              <li>
-                <div (click)="navigateToUserDashboard()"
-                     class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
-                  <span class="text-gray-700 font-medium">Dashboard</span>
-                </div>
-              </li>
-            </ng-container>
+            <!-- User Dashboard (everyone) -->
+            <!-- User Dashboard (everyone) -->
+            <li>
+              <div (click)="setIssueStatusView('PENDING')"
+                   class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg"
+                   [class.bg-blue-50]="activeView === 'issueStatus' || activeView === 'createIssue'">
+                <span class="text-gray-700 font-medium">User Dashboard</span>
+              </div>
 
-            <!-- HEAD: Configuration + Admin Dashboard + User Dashboard -->
-            <ng-container *ngIf="isHead">
-              <li>
-                <div (click)="navigateToConfiguration()"
-                     class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
-                  <span class="text-gray-700 font-medium"></span>
-                </div>
-              </li>
-              <li>
-                <div (click)="navigateToAdminDashboard()"
-                     class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
-                  <span class="text-gray-700 font-medium">Admin Dashboard</span>
-                </div>
-              </li>
-              <li>
-                <div (click)="navigateToUserDashboard()"
-                     class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
-                  <span class="text-gray-700 font-medium">User Dashboard</span>
-                </div>
-              </li>
-            </ng-container>
+              <ul *ngIf="activeView === 'issueStatus' || activeView === 'createIssue'"
+                  class="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
 
-            <!-- EMPLOYEE (not student, not head): User Dashboard only -->
-            <ng-container *ngIf="isEmployee">
-              <li>
-                <div (click)="navigateToUserDashboard()"
-                     class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
-                  <span class="text-gray-700 font-medium">User Dashboard</span>
-                </div>
-              </li>
-            </ng-container>
+                <!-- Create Issue -->
+                <li>
+                  <div (click)="setView('createIssue')"
+                       class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                       [class.bg-blue-50]="activeView === 'createIssue'">
+                    <i class="bi bi-plus-circle mr-2 text-gray-500 text-xs"></i>
+                    <span class="text-gray-600 text-xs font-medium">Create Issue</span>
+                  </div>
+                </li>
+
+                <!-- Issue Status (expandable, 4 sub-statuses) -->
+                <li>
+                  <div (click)="toggleIssueStatusMenu()"
+                       class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                       [class.bg-blue-50]="activeView === 'issueStatus'">
+                    <div class="flex items-center">
+                      <i class="bi bi-list-check mr-2 text-gray-500 text-xs"></i>
+                      <span class="text-gray-600 text-xs font-medium">Issue Status</span>
+                    </div>
+                    <i class="bi text-gray-400 text-xs"
+                       [class.bi-chevron-down]="issueStatusExpanded"
+                       [class.bi-chevron-up]="!issueStatusExpanded"></i>
+                  </div>
+
+                  <ul *ngIf="issueStatusExpanded" class="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
+
+<!--                    <li>-->
+<!--                      <div (click)="setIssueStatusView('ALL')"-->
+<!--                           class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"-->
+<!--                           [class.bg-blue-50]="activeIssueStatus === 'ALL' && activeView === 'issueStatus'">-->
+<!--                        <div class="flex items-center">-->
+<!--                          <i class="bi bi-circle-fill mr-2 text-gray-400" style="font-size:6px"></i>-->
+<!--                          <span class="text-gray-600 text-xs font-medium">All</span>-->
+<!--                        </div>-->
+<!--                        <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-600">-->
+<!--              {{ totalIssueStatusCount }}-->
+<!--            </span>-->
+<!--                      </div>-->
+<!--                    </li>-->
+
+                    <li>
+                      <div (click)="setIssueStatusView('PENDING')"
+                           class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                           [class.bg-blue-50]="activeIssueStatus === 'PENDING' && activeView === 'issueStatus'">
+                        <div class="flex items-center">
+                          <i class="bi bi-circle-fill mr-2 text-blue-500" style="font-size:6px"></i>
+                          <span class="text-gray-600 text-xs font-medium">Pending</span>
+                        </div>
+                        <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
+              {{ issueStatusCounts.PENDING }}
+            </span>
+                      </div>
+                    </li>
+
+                    <li>
+                      <div (click)="setIssueStatusView('INPROGRESS')"
+                           class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                           [class.bg-blue-50]="activeIssueStatus === 'INPROGRESS' && activeView === 'issueStatus'">
+                        <div class="flex items-center">
+                          <i class="bi bi-circle-fill mr-2 text-amber-500" style="font-size:6px"></i>
+                          <span class="text-gray-600 text-xs font-medium">In Progress</span>
+                        </div>
+                        <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
+              {{ issueStatusCounts.INPROGRESS }}
+            </span>
+                      </div>
+                    </li>
+
+                    <li>
+                      <div (click)="setIssueStatusView('COMPLETED')"
+                           class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                           [class.bg-blue-50]="activeIssueStatus === 'COMPLETED' && activeView === 'issueStatus'">
+                        <div class="flex items-center">
+                          <i class="bi bi-circle-fill mr-2 text-emerald-500" style="font-size:6px"></i>
+                          <span class="text-gray-600 text-xs font-medium">Completed</span>
+                        </div>
+                        <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">
+              {{ issueStatusCounts.COMPLETED }}
+            </span>
+                      </div>
+                    </li>
+
+                    <li>
+                      <div (click)="setIssueStatusView('REJECTED')"
+                           class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                           [class.bg-blue-50]="activeIssueStatus === 'REJECTED' && activeView === 'issueStatus'">
+                        <div class="flex items-center">
+                          <i class="bi bi-circle-fill mr-2 text-red-500" style="font-size:6px"></i>
+                          <span class="text-gray-600 text-xs font-medium">Rejected</span>
+                        </div>
+                        <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">
+              {{ issueStatusCounts.REJECTED }}
+            </span>
+                      </div>
+                    </li>
+
+                  </ul>
+                </li>
+
+              </ul>
+            </li>
+
+            <!-- Admin Dashboard (only heads) -->
+            <li *ngIf="isHead">
+              <div (click)="navigateToAdminDashboard()"
+                   class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg">
+                <span class="text-gray-700 font-medium">Admin Dashboard</span>
+              </div>
+            </li>
+
+            <!-- Configuration (only heads) -->
+            <li *ngIf="isHead">
+              <div (click)="setView('configuration')"
+                   class="flex items-center cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg"
+                   [class.bg-blue-50]="activeView === 'configuration'">
+                <span class="text-gray-700 font-medium">Configuration</span>
+              </div>
+            </li>
+
+            <!-- Issue Queue (only employees with developer role, NOT heads) -->
+            <li *ngIf="isEmployee && isDeveloper">
+              <div (click)="toggleIssueQueue()"
+                   class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-2 rounded-lg"
+                   [class.bg-blue-50]="activeView === 'openPool' || activeView === 'myQueue'">
+                <span class="text-gray-700 font-medium">Issue Queue</span>
+                <i *ngIf="sidebarOpen"
+                   [class.bi-chevron-down]="issueQueueExpanded"
+                   [class.bi-chevron-up]="!issueQueueExpanded"
+                   class="bi text-gray-400 text-xs"></i>
+              </div>
+
+              <!-- Issue Queue Subsections -->
+              <ul *ngIf="issueQueueExpanded"
+                  class="mt-1 ml-4 space-y-1 border-l border-gray-200 pl-3">
+
+                <!-- Open Pool -->
+                <li>
+                  <div (click)="setView('openPool')"
+                       class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                       [class.bg-blue-50]="activeView === 'openPool'">
+                    <div class="flex items-center">
+                      <i class="bi bi-inbox mr-2 text-gray-500 text-xs"></i>
+                      <span class="text-gray-600 text-xs font-medium">Open Pool</span>
+                    </div>
+                    <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                      {{ openPoolCount }}
+                    </span>
+                  </div>
+                </li>
+
+                <!-- My Queue -->
+                <li>
+                  <div (click)="setView('myQueue')"
+                       class="flex items-center justify-between cursor-pointer hover:bg-gray-100 px-2 py-1.5 rounded-lg"
+                       [class.bg-blue-50]="activeView === 'myQueue'">
+                    <div class="flex items-center">
+                      <i class="bi bi-person-check mr-2 text-gray-500 text-xs"></i>
+                      <span class="text-gray-600 text-xs font-medium">My Queue</span>
+                    </div>
+                    <span class="text-xs font-semibold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                      {{ myQueueCount }}
+                    </span>
+                  </div>
+                </li>
+
+              </ul>
+            </li>
 
           </ul>
         </li>
-
       </ul>
     </nav>
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main class="flex-1 p-6 lg:p-8 overflow-y-auto ml-72">
+  <main class="flex-1 p-6 lg:p-8 overflow-y-auto transition-all duration-300"
+        [class.ml-72]="sidebarOpen"
+        [class.ml-16]="!sidebarOpen">
 
-    <!-- Topbar -->
     <!-- Topbar -->
     <div class="flex items-center justify-between mb-6 gap-4">
 
@@ -113,8 +252,8 @@
             <span *ngIf="unreadCount > 0"
                   class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white
                text-xs flex items-center justify-center font-semibold">
-    {{ unreadCount }}
-  </span>
+              {{ unreadCount }}
+            </span>
           </button>
 
           <!-- Notification Dropdown -->
@@ -175,13 +314,13 @@
                   <p class="text-xs text-gray-400">{{ r.deptShortName }} · {{ r.deptLongName }}</p>
                 </div>
                 <div class="flex items-center gap-2">
-              <span class="text-xs px-2 py-0.5 rounded-full font-medium"
-                    [class.bg-red-100]="r.isHead"
-                    [class.text-red-600]="r.isHead"
-                    [class.bg-gray-100]="!r.isHead"
-                    [class.text-gray-500]="!r.isHead">
-                {{ r.isHead ? 'Admin' : 'Employee' }}
-              </span>
+                  <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                        [class.bg-red-100]="r.isHead"
+                        [class.text-red-600]="r.isHead"
+                        [class.bg-gray-100]="!r.isHead"
+                        [class.text-gray-500]="!r.isHead">
+                    {{ r.isHead ? 'Admin' : 'Employee' }}
+                  </span>
                   <i *ngIf="i === activeRoleIndex" class="bi bi-check2 text-blue-500"></i>
                 </div>
               </li>
@@ -194,13 +333,37 @@
     </div>
 
     <!-- Configuration view -->
-    <!-- Configuration view -->
-    <section *ngIf="showConfiguration">
+    <section *ngIf="activeView === 'configuration'">
       <app-configuration [deptId]="activeDeptId"></app-configuration>
     </section>
-    <!-- Default profile card -->
-    <!-- Default profile card -->
-    <section *ngIf="!showConfiguration" class="grid grid-cols-12 gap-6">
+
+    <!-- Create Issue -->
+    <section *ngIf="activeView === 'createIssue'">
+      <app-issue-form
+        (issueCreated)="setView('issueStatus')"
+        (cancel)="setView('issueStatus')">
+      </app-issue-form>
+    </section>
+
+    <!-- Issue Status -->
+    <section *ngIf="activeView === 'issueStatus'">
+      <app-dashboard [filterStatus]="activeIssueStatus"
+                     (filterCleared)="setIssueStatusView('ALL')">
+      </app-dashboard>
+    </section>
+
+    <!-- Developer: Open Pool -->
+    <section *ngIf="activeView === 'openPool'">
+      <app-open-pool (countChanged)="openPoolCount = $event"></app-open-pool>
+    </section>
+
+    <!-- Developer: My Queue -->
+    <section *ngIf="activeView === 'myQueue'">
+      <app-my-queue (countChanged)="myQueueCount = $event"></app-my-queue>
+    </section>
+
+    <!-- Default landing — profile card -->
+    <section *ngIf="activeView === null" class="grid grid-cols-12 gap-6">
       <div class="col-span-8">
 
         <!-- Student profile card -->
@@ -213,9 +376,7 @@
           <div class="flex-1">
             <div class="text-xs text-gray-400 font-medium uppercase tracking-wide mb-1">Student ID: {{ user.id }}</div>
             <div class="text-lg font-semibold">{{ user.name }}</div>
-            <div class="text-sm text-gray-500 mt-1">
-              {{ user.deptLongName }} ({{ user.deptShortName }}, {{ user.programShortName }})
-            </div>
+            <div class="text-sm text-gray-500 mt-1">{{ user.deptLongName }} ({{ user.deptShortName }}, {{ user.programShortName }})</div>
             <div class="text-sm text-gray-400 mt-2"><i class="bi bi-envelope mr-2"></i>{{ user.email }}</div>
             <div class="text-sm text-gray-400"><i class="bi bi-envelope-at mr-2"></i>{{ user.personalEmail }}</div>
             <div class="text-sm text-gray-400"><i class="bi bi-mortarboard mr-2"></i>{{ user.programLongName }}</div>
@@ -232,7 +393,7 @@
           </div>
           <div class="flex-1">
             <div class="text-lg font-semibold">{{ user.name }}</div>
-            <div class="text-sm text-gray-500">{{ user.designation }} — {{ user.deptLongName }} ({{user.deptShortName}})</div>
+            <div class="text-sm text-gray-500">{{ user.designation }} — {{ user.deptLongName }} ({{ user.deptShortName }})</div>
             <div class="text-sm text-gray-400 mt-2"><i class="bi bi-envelope mr-2"></i>{{ user.email }}</div>
             <div class="text-sm text-gray-400"><i class="bi bi-envelope-at mr-2"></i>{{ user.personalEmail }}</div>
             <div class="text-sm text-gray-400"><i class="bi bi-building mr-2"></i>{{ user.university }}</div>

@@ -1,143 +1,100 @@
-<div class="modal-wrapper">
-  <div class="issue-card refined">
-    <!-- 🔝 Header -->
-    <div class="issue-header">
-      <!-- <div class="header-actions"> -->
-        <button class="btn-close" (click)="onCloseModal()" aria-label="Close">
-          <i class="bi bi-x-lg"></i>
-        </button>
-      <!-- </div> -->
-    </div>
+<div class="issue-panel" *ngIf="issue">
 
-    <!-- 🧾 Issue Details and Comment Section -->
-    <div class="issue-body">
-      <!-- Left Side: Issue Details -->
-      <div class="issue-details">
-        <!-- <div class="info-section"> -->
-        <!-- Status -->
-        <div class="info-item">
-          <span class="label">Status:&nbsp;</span>
-          <span
-            class="value pill"
-            [ngClass]="issue.status?.toLowerCase()"
-            [ngStyle]="{ 'background-color': getIssueStatusColor(issue.status), color: '#ffffff' }"
-            >
-              {{ issue.status }}
-          </span>
-        </div>
-        <!-- Title -->
-        <div class="info-item">
-          <span class="label">Title:&nbsp;</span>
-          <span class="value title">{{ issue.title }}</span>
-        </div>
-        <!-- Description -->
-        <div class="info-item">
-          <span class="label">Description:&nbsp;</span>
-          <textarea readonly class="value desc-text" rows="3"
-            placeholder="Issue description is empty...">{{ issue.description }}</textarea>
-        </div>
-        <!-- Categories -->
-        <div class="info-item">
-          <span class="label">Category:&nbsp;</span>
-          <span class="tag" *ngIf="issue?.categories?.length; else noCat">
-            <ng-container *ngFor="let c of issue.categories; let last = last">
-              {{ c.categoryName }}<span *ngIf="!last">, </span>
-            </ng-container>
-          </span>
-          <ng-template #noCat>No Category</ng-template>
-        </div>
-        <!-- Attachments -->
-        <div
-          class="info-item attachments"
-          *ngIf="(issue.files?.length) || (files?.length)"
-          >
-          <button (click)="clickAttachmentShow()">
-            {{ showAttachment.buttonText }} &nbsp;
-            <span *ngIf="!showAttachment.show"><i class="bi bi-eye-fill"></i></span>
-            <span *ngIf="showAttachment.show"><i class="bi bi-eye-slash-fill"></i></span>
-
-          </button>
-
-          <!-- <span class="label">
-              Attachments:&nbsp;
-            </span> -->
-            <!-- *ngIf="showAttachment.show" -->
-          <div
-            class="value tags"
-            *ngIf="showAttachment.show"
-            >
-            <div class="file-link" *ngFor="let file of (issue.files || files)">
-              <a
-                class="file-chip"
-                [href]="'http://localhost:8085/api/issues/files/' + issue.user.id + '/' + file"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Click to view"
-                >
-                📎&nbsp;{{ file }}
-              </a>
-              <a
-                [href]="'http://localhost:8085/api/issues/files/' + issue.user.id + '/' + file"
-                download
-                title="Download file"
-                class="download-icon"
-                >
-                <i class="bi bi-download"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Status Reason (Success or Error) -->
-        <div *ngIf="issue.status === 'COMPLETED'" class="status-msg success">
-          ✅ {{ issue.completedReason || 'No reason provided' }}
-        </div>
-        <div *ngIf="issue.status === 'REJECTED'" class="status-msg error">
-          ❌ {{ issue.rejectionReason || 'No reason provided' }}
-        </div>
-        <!-- </div> -->
-      </div>
-
-      <span class="border"></span>
-
-      <!-- Right Side: Comment Section -->
-      <div class="comment-section" *ngIf="issue.status !== 'PENDING'">
-        <!-- Comment Input Box -->
-        <div class="comment-box"
-          *ngIf="issue.status 'INPROGRESS'">
-          <h4>Write your comments:</h4>
-          <div class="comment-area">
-            <textarea [(ngModel)]="newComment" placeholder="Write a comment..."></textarea>
-            <button (click)="submitComment()">Post</button>
-          </div>
-        </div>
-
-        <!-- All Comments -->
-        <span
-          *ngIf="!(issue.status !== 'PENDING' && issue.status !== 'REJECTED' && issue.status !== 'COMPLETED') && comments.length>0"
-          class="comment-word"
-          >
-            Comments
-          </span>
-        <div *ngFor="let comment of comments">
-          <div class="comment">
-            <div class="author">
-              <span class="icon">
-                <i class="fa-solid fa-user"></i>
-                {{ comment.author }}
-              </span>
-              <span class="time">
-                {{ comment.time }}
-              </span>
-            </div>
-
-            <div class="message">
-              {{ comment.message }}
-            </div>
-          </div>
-        </div>
-
-      </div>
+  <!-- Header -->
+  <div class="issue-panel-header">
+    <div class="issue-panel-header-top">
+      <span class="issue-panel-eyebrow">Issue Details</span>
+      <button class="issue-panel-close" (click)="onCloseModal()" aria-label="Close">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
   </div>
-   </div>
+
+  <!-- Scrollable body -->
+  <div class="issue-panel-body">
+
+    <!-- Title + Description combined box -->
+    <section class="issue-panel-section">
+      <div class="issue-panel-box">
+        <div class="issue-panel-field">
+          <span class="issue-panel-field-label">Title:</span>
+          <span class="issue-panel-field-value">{{ issue.title }}</span>
+        </div>
+
+        <hr class="issue-panel-divider" />
+
+        <div class="issue-panel-field">
+          <span class="issue-panel-field-label">Description:</span>
+          <span class="issue-panel-field-value" *ngIf="issue.description; else noDesc">{{ issue.description }}</span>
+          <ng-template #noDesc><span class="issue-panel-empty">No description provided.</span></ng-template>
+        </div>
+      </div>
+    </section>
+
+    <!-- Attachments -->
+    <section class="issue-panel-section" *ngIf="(issue.files?.length) || (files?.length)">
+      <button class="issue-panel-attach-toggle" (click)="clickAttachmentShow()">
+        <i class="bi" [ngClass]="showAttachment.show ? 'bi-eye-slash-fill' : 'bi-eye-fill'"></i>
+        {{ showAttachment.buttonText }}
+      </button>
+
+      <div class="issue-panel-files" *ngIf="showAttachment.show">
+        <div class="issue-panel-file" *ngFor="let file of (issue.files || files)">
+          <a
+            class="issue-panel-file-name"
+            [href]="'http://localhost:8085/api/issues/files/' + issue.user.id + '/' + file"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Click to view"
+          >
+            <i class="bi bi-paperclip"></i> {{ file }}
+          </a>
+          <a
+            [href]="'http://localhost:8085/api/issues/files/' + issue.user.id + '/' + file"
+            download
+            title="Download file"
+            class="issue-panel-file-download"
+          >
+            <i class="bi bi-download"></i>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hardcoded resolver line -->
+    <section class="issue-panel-section" *ngIf="issue.status === 'COMPLETED' || issue.status === 'REJECTED'">
+      <p class="issue-panel-resolver">
+        <i class="bi bi-patch-check-fill"></i> Problem solved by ICT Center
+      </p>
+    </section>
+
+    <!-- Feedback / reason -->
+    <section class="issue-panel-section" *ngIf="issue.status === 'COMPLETED' || issue.status === 'REJECTED'">
+      <h4 class="issue-panel-label"><i class="bi bi-chat-left-text"></i> Feedback</h4>
+      <div class="issue-panel-reason" [ngClass]="issue.status === 'COMPLETED' ? 'success' : 'error'">
+        <span>{{ (issue.status === 'COMPLETED' ? issue.completedReason : issue.rejectionReason) || 'No reason provided' }}</span>
+      </div>
+    </section>
+
+    <!-- Comments -->
+    <section class="issue-panel-section issue-panel-comments" *ngIf="issue.status !== 'PENDING'">
+
+      <h4 class="issue-panel-label" *ngIf="comments.length > 0">
+        <i class="bi bi-chat-square-text"></i> Comments <span class="issue-panel-count">{{ comments.length }}</span>
+      </h4>
+
+      <div class="issue-panel-comment-list" *ngIf="comments.length > 0">
+        <div class="issue-panel-comment" *ngFor="let comment of comments">
+          <div class="issue-panel-comment-head">
+            <span class="issue-panel-comment-author"><i class="bi bi-person-circle"></i> {{ comment.author }}</span>
+            <span class="issue-panel-comment-time">{{ comment.time }}</span>
+          </div>
+          <p class="issue-panel-comment-msg">{{ comment.message }}</p>
+        </div>
+      </div>
+
+      <p class="issue-panel-empty" *ngIf="comments.length === 0">No comments yet.</p>
+    </section>
+
+  </div>
+</div>
