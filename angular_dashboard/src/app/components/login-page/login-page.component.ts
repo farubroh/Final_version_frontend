@@ -61,6 +61,12 @@ export class LoginPageComponent {
           } else {
             // Employee: store full roleInfo array as JSON
             localStorage.setItem('roleInfo', JSON.stringify(res.roleInfo ?? []));
+
+            // ✅ derive and store support system role from the PRIMARY role entry
+            const primaryRole = (res.roleInfo ?? []).find((r: any) => r.isPrimaryRole)
+              ?? (res.roleInfo ?? [])[0];
+            localStorage.setItem('supportSystemRole', primaryRole?.supportSystemRole ?? '');
+            localStorage.setItem('supportSystemRoleActive', String(primaryRole?.isActive === true));
           }
 
           this.authService.login({

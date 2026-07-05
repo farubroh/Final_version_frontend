@@ -1,111 +1,162 @@
-<div class="ticket-wrapper">
-  <div class="top-bar">
-    <h2>Create Support</h2>
-  </div>
+<div class="page-layout">
 
-  <!-- Contact Support + Category in the Same Row -->
-  <div class="form-row">
-    <!-- Contact Support Button -->
-    <div class="support-section">
-      <button class="modern-button" type="button" (click)="toggleSupportDetails()">
-        💬 Common problems
-      </button>
-    </div>
+  <!-- LEFT: Form (70%) -->
+  <div class="form-col">
+    <div class="ticket-wrapper">
 
-    <!-- Category Dropdown (SINGLE select — no nesting) -->
-    <div class="tt">
-      <label for="category" class="sr-only">Category</label>
-      <!-- create-issue.component.html -->
-<select [(ngModel)]="form.category" name="category" id="category" required>
-  <option [ngValue]="''" disabled selected>Select a category</option>
-  <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">
-    {{ cat.categoryName }}
-  </option>
-</select>
-
-    </div>
-  </div>
-
-  <!-- Support Details Below -->
-  <div *ngIf="showSupportDetails" class="support-details">
-    <ul>
-      <li><strong>Quota Issue:</strong> Visit Registrar Office (Level-2, Block-D)</li>
-      <li><strong>Payment Issue:</strong> Visit Treasurer Office (Level-5, Block-D)</li>
-      <li><strong>Edumail Issue:</strong> Visit 7B04 (Level-6, Block-B)</li>
-      <li><strong>Result/CGPA issue:</strong> Visit CoE office (Level-4, Block-B)</li>
-      <li><strong>Re-admission Issue:</strong> Ask Department Advisor</li>
-      <li><strong>Still not solved? Create Support Ticket</strong></li>
-    </ul>
-  </div>
-
-  <!-- Ticket Form -->
-  <form class="ticket-form" (ngSubmit)="handleSubmit()" enctype="multipart/form-data">
-    <!-- Title -->
-    <div class="form-group">
-      <label for="title">Title*</label>
-      <input
-        type="text"
-        [(ngModel)]="form.title"
-        name="title"
-        id="title"
-        placeholder="Enter here..."
-        required
-      />
-    </div>
-
-    <!-- Description -->
-    <div class="form-group">
-      <label for="description">Description*</label>
-      <textarea
-        [(ngModel)]="form.description"
-        name="description"
-        id="description"
-        maxlength="120"
-        placeholder="Let us know your thoughts..."
-        required
-        (input)="adjustTextareaHeight($event)"
-      ></textarea>
-    </div>
-
-    <!-- File Upload -->
-    <div class="form-group">
-      <button type="button" class="upload-button" (click)="fileInput.click()">
-        📎 Upload Attachment
-      </button>
-
-      <input
-        #fileInput
-        type="file"
-        (change)="onFileSelected($event)"
-        multiple
-        hidden
-      />
-
-      <!-- File Preview List -->
-      <div class="file-preview" *ngIf="filePreviews.length">
-        <div *ngFor="let file of filePreviews; let i = index" class="file-thumb">
-          <div class="file-icon">
-            <img *ngIf="file.type?.startsWith('image')" [src]="file.url" alt="preview" />
-            <span *ngIf="!file.type?.startsWith('image')">📄</span>
-          </div>
-          <div class="file-info">
-            <span class="file-name">{{ file.name }}</span>
-            <button type="button" class="file-remove" (click)="removeFile(i)">✖</button>
-          </div>
+      <!-- Header -->
+      <div class="form-header">
+        <div class="form-header-icon">
+          <i class="bi bi-headset"></i>
+        </div>
+        <div>
+          <h2 class="form-title">Create Support Ticket</h2>
+          <p class="form-subtitle">Describe your issue and we'll get back to you</p>
         </div>
       </div>
 
-      <!-- Upload Progress -->
-      <div *ngIf="uploadProgress > 0" class="progress-bar">
-        <div class="progress" [style.width.%]="uploadProgress"></div>
-      </div>
-      <p *ngIf="uploadSummary && !isUploading" class="upload-summary">{{ uploadSummary }}</p>
-    </div>
+      <!-- Form -->
+      <form class="ticket-form" (ngSubmit)="handleSubmit()" enctype="multipart/form-data">
 
-    <!-- Actions -->
-    <div class="form-actions">
-      <button type="button" class="cancel-btn" (click)="onCancel()">Cancel</button>
-      <button type="submit" class="submit-btn">Create Ticket</button>
+        <!-- Title -->
+        <div class="field-group">
+          <label class="field-label" for="title">
+            <i class="bi bi-card-heading"></i> Title <span class="required">*</span>
+          </label>
+          <input
+            class="field-input"
+            type="text"
+            [(ngModel)]="form.title"
+            name="title"
+            id="title"
+            placeholder="Brief summary of your issue"
+            required
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="field-group">
+          <label class="field-label" for="description">
+            <i class="bi bi-text-paragraph"></i> Description <span class="required">*</span>
+          </label>
+          <textarea
+            class="field-input field-textarea"
+            [(ngModel)]="form.description"
+            name="description"
+            id="description"
+            maxlength="500"
+            placeholder="Describe your issue in detail..."
+            required
+            (input)="adjustTextareaHeight($event)"
+          ></textarea>
+          <span class="char-hint">{{ form.description.length }}/500</span>
+        </div>
+
+        <!-- File Upload -->
+        <div class="field-group">
+          <label class="field-label">
+            <i class="bi bi-paperclip"></i> Attachments
+            <span class="field-optional">(optional, max 5 files)</span>
+          </label>
+
+          <div class="upload-zone" (click)="fileInput.click()">
+            <i class="bi bi-cloud-arrow-up upload-zone-icon"></i>
+            <p class="upload-zone-text">Click or drag files here to upload</p>
+            <p class="upload-zone-hint">PDF, images, documents — up to 5MB each</p>
+          </div>
+
+          <input
+            #fileInput
+            type="file"
+            (change)="onFileSelected($event)"
+            multiple
+            style="display:none;"
+          />
+
+          <!-- File List -->
+          <div class="file-list" *ngIf="filePreviews.length">
+            <div *ngFor="let file of filePreviews; let i = index" class="file-chip">
+              <img *ngIf="file.type?.startsWith('image')" [src]="file.url" class="file-chip-img" alt="preview" />
+              <i *ngIf="!file.type?.startsWith('image')" class="bi bi-file-earmark file-chip-icon"></i>
+              <span class="file-chip-name">{{ file.name }}</span>
+              <button type="button" class="file-chip-remove" (click)="removeFile(i)">
+                <i class="bi bi-x"></i>
+              </button>
+            </div>
+          </div>
+
+          <div *ngIf="isUploading" class="progress-bar">
+            <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+          </div>
+          <p *ngIf="uploadSummary && !isUploading" class="upload-summary">
+            <i class="bi bi-check-circle-fill" style="color:#22c55e; margin-right:5px;"></i>{{ uploadSummary }}
+          </p>
+        </div>
+
+        <!-- Submit -->
+        <!-- Submit -->
+        <div class="form-actions">
+          <button type="submit" class="btn-submit">
+            <i class="bi bi-send" style="margin-right:6px;"></i> Submit Ticket
+          </button>
+          <div id="simpui-toast-container"></div>
+        </div>
+
+      </form>
     </div>
-  </form>
+  </div>
+
+  <!-- RIGHT: FAQ (30%) -->
+  <div class="faq-col">
+    <div class="faq-wrapper">
+      <div class="faq-header">
+        <i class="bi bi-patch-question-fill faq-header-icon"></i>
+        <span>Frequently Asked Questions</span>
+      </div>
+
+      <div class="faq-list">
+
+        <div *ngFor="let faq of faqs; let i = index" class="faq-item"
+             [class.faq-open]="openFaqIndex === i">
+          <button class="faq-question" type="button" (click)="toggleFaq(i)">
+            <span>{{ faq.q }}</span>
+            <i class="bi faq-chevron"
+               [class.bi-chevron-down]="openFaqIndex !== i"
+               [class.bi-chevron-up]="openFaqIndex === i"></i>
+          </button>
+          <div class="faq-answer" *ngIf="openFaqIndex === i">
+            <div *ngIf="faq.contacts && faq.contacts.length > 0">
+              <p class="faq-answer-text">{{ faq.office }}</p>
+              <p class="faq-answer-note">{{ faq.note }}</p>
+              <table class="faq-table" *ngIf="faq.contacts.length > 0">
+                <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Designation</th>
+                  <th>Contact</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let c of faq.contacts">
+                  <td>{{ c.name }}</td>
+                  <td>{{ c.designation }}</td>
+                  <td>{{ c.contact || '—' }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="!faq.contacts || faq.contacts.length === 0">
+              <ol class="faq-steps" *ngIf="faq.steps && faq.steps.length > 0">
+                <li *ngFor="let step of faq.steps">{{ step }}</li>
+              </ol>
+              <p class="faq-answer-text" *ngIf="!faq.steps || faq.steps.length === 0">{{ faq.answer }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
+
